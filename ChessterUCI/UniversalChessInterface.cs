@@ -8,10 +8,9 @@ namespace ChessterUCI
 {
     public class UniversalChessInterface
     {
-        public bool EngineInitialized { get; set; }
-
-        public void InitializeEngine()
+        public bool InitializeEngine()
         {
+            return true;
         }
     }
 }
