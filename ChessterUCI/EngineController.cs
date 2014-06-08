@@ -47,6 +47,7 @@ namespace ChessterUCI
             {
                 // Free any managed objects here. 
                 //
+                ChessEngineProcess.Close();
                 ChessEngineProcess.Dispose();
             }
 
