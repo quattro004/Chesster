@@ -13,14 +13,14 @@ namespace TestChessterUCI
         [Fact]
         public void start_engine_process()
         {
-            var engineController = new EngineController();
-            using (var engineProcess = engineController.StartChessEngine())
+            using (var engineController = new EngineController())
             {
-                Assert.NotNull(engineProcess);
-                Assert.True(engineProcess.StartInfo.RedirectStandardInput, "Standard input has not been redirected.");
-                Assert.True(engineProcess.StartInfo.RedirectStandardError, "Standard error has not been redirected.");
-                Assert.True(engineProcess.StartInfo.RedirectStandardOutput, "Standard output has not been redirected.");
-                engineProcess.Close();
+                engineController.StartChessEngine();
+                Assert.NotNull(engineController.ChessEngineProcess);
+                Assert.True(engineController.ChessEngineProcess.StartInfo.RedirectStandardInput, "Standard input has not been redirected.");
+                Assert.True(engineController.ChessEngineProcess.StartInfo.RedirectStandardError, "Standard error has not been redirected.");
+                Assert.True(engineController.ChessEngineProcess.StartInfo.RedirectStandardOutput, "Standard output has not been redirected.");
+                engineController.ChessEngineProcess.Close();
             }
         }
     }
