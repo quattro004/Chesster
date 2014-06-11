@@ -1,6 +1,7 @@
 ﻿using ChessterUCI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +17,32 @@ namespace TestChessterUCI
             using (var engineController = new EngineController())
             {
                 engineController.StartChessEngine();
-                Assert.NotNull(engineController.ChessEngineProcess);
-                Assert.True(engineController.ChessEngineProcess.StartInfo.RedirectStandardInput, "Standard input has not been redirected.");
-                Assert.True(engineController.ChessEngineProcess.StartInfo.RedirectStandardError, "Standard error has not been redirected.");
-                Assert.True(engineController.ChessEngineProcess.StartInfo.RedirectStandardOutput, "Standard output has not been redirected.");
-                engineController.ChessEngineProcess.Close();
+                Assert.True(engineController.IsEngineRunning, "The engine failed to start.");
+            }
+        }
+
+        [Fact(Timeout=2000)]
+        public void set_uci_mode()
+        {
+            using (var engineController = new EngineController())
+            {
+                var waitingForResponse = true;
+                engineController.ErrorReceived += (sender, e) => 
+                {
+                    Assert.True(false, string.Format("Received an error from the chess engine\r\n{0}", e.Data));
+                };
+                engineController.DataReceived += (sender, e) =>
+                {
+                    Debug.WriteLine("Output received from chess engine");
+                    Debug.WriteLine("\t{0}", e.Data);
+                    if (e.Data.StartsWith("uciok")) { waitingForResponse = false; }
+                };
+                engineController.StartChessEngine();
+                engineController.SendCommand("uci");
+                while(waitingForResponse)
+                {
+                    System.Threading.Thread.Sleep(10);
+                }
             }
         }
     }
