@@ -6,7 +6,7 @@ using System.Text;
 using System.Configuration;
 using System.IO;
 
-namespace ChessterUCI
+namespace ChessterUci
 {
     /// <summary>
     /// Controls the chess engine process. Any UCI compliant chess engine can be used.
