@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChessterUciClient.cs" />
     <Compile Include="EngineController.cs" />
     <Compile Include="UniversalChessInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -13,7 +13,7 @@ namespace TestChessterUCI
         [Fact]
         public void initialize_engine()
         {
-            var uciClient = new UniversalChessInterface();
+            var uciClient = new ChessterUciClient();
             var engineInitialized = uciClient.InitializeEngine();
             Assert.True(engineInitialized, "The chess engine was not initialized properly.");
         }

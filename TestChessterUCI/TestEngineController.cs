@@ -21,7 +21,7 @@ namespace TestChessterUCI
             }
         }
 
-        [Fact(Timeout=2000)]
+        [Fact(Timeout=2500)]
         public void set_uci_mode()
         {
             using (var engineController = new EngineController())

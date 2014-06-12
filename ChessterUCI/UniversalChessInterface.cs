@@ -9,17 +9,17 @@ namespace ChessterUCI
     /// <summary>
     /// Implementation of the Universal Chess Interface http://wbec-ridderkerk.nl/html/UCIProtocol.html
     /// </summary>
-    public class UniversalChessInterface
+    public abstract class UniversalChessInterface
     {
         /// <summary>
         /// <see cref="EngineController"/> which controls and communicates with the chess engine process.
         /// </summary>
-        public EngineController ChessEngineController { get; set; }
+        private EngineController ChessEngineController { get; set; }
 
         /// <summary>
         /// Performs initialization for the chess interface.
         /// </summary>
-        public UniversalChessInterface()
+        protected UniversalChessInterface()
         {
             ChessEngineController = new EngineController();
         }
