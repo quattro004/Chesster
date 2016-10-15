@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Configuration;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ChessterUci
 {
     /// <summary>
     /// Controls the chess engine process. Any UCI compliant chess engine can be used.
     /// </summary>
-    public class EngineController : IDisposable
+    internal class EngineController : IDisposable, IEngineController
     {
         private bool _disposed;
         private Process _chessEngineProcess;
@@ -26,6 +23,15 @@ namespace ChessterUci
         public event EventHandler<DataReceivedEventArgs> ErrorReceived;
 
         /// <summary>
+        /// Initializes the controller and creates the chess engine process.
+        /// </summary>
+        /// <param name="chessEnginePath"></param>
+        public EngineController(string chessEnginePath)
+        {
+            StartChessEngine(chessEnginePath);
+        }
+
+        /// <summary>
         /// Determines whether the chess engine process is running.
         /// </summary>
         public bool IsEngineRunning
@@ -34,38 +40,6 @@ namespace ChessterUci
             {
                 return _chessEngineProcess != null && !_chessEngineProcess.HasExited;
             }
-        }
-
-        /// <summary>
-        /// Starts the chess engine process and redirects standard error, input and output since UCI chess engines
-        /// use standard input and output to communicate via text commands.
-        /// </summary>
-        /// <returns>Running <see cref="Process"/> of the chess engine specified in the ChessEnginePath application setting.</returns>
-        public void StartChessEngine()
-        {
-            _chessEngineProcess = new Process();
-            _chessEngineProcess.StartInfo.FileName = ConfigurationManager.AppSettings["ChessEnginePath"];
-            _chessEngineProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(_chessEngineProcess.StartInfo.FileName);
-            _chessEngineProcess.StartInfo.UseShellExecute = false;
-            _chessEngineProcess.StartInfo.CreateNoWindow = true;
-            _chessEngineProcess.StartInfo.RedirectStandardError = true;
-            _chessEngineProcess.StartInfo.RedirectStandardInput = true;
-            _chessEngineProcess.StartInfo.RedirectStandardOutput = true;
-            _chessEngineProcess.OutputDataReceived += _chessEngineProcess_OutputDataReceived;
-            _chessEngineProcess.ErrorDataReceived += _chessEngineProcess_ErrorDataReceived;
-            _chessEngineProcess.Start();
-            _chessEngineProcess.BeginErrorReadLine();
-            _chessEngineProcess.BeginOutputReadLine();
-        }
-
-        private void _chessEngineProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            OnRaiseErrorReceived(sender, e);
-        }
-
-        private void _chessEngineProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            OnRaiseDataReceived(sender, e);
         }
 
         /// <summary>
@@ -139,9 +113,44 @@ namespace ChessterUci
         /// events will fire when the engine responds.
         /// </summary>
         /// <param name="command"></param>
-        public void SendCommand(string command)
+        public async Task SendCommand(string command)
         {
-            _chessEngineProcess.StandardInput.WriteLineAsync(command);
+            await _chessEngineProcess.StandardInput.WriteLineAsync(command);
+        }
+
+        private void _chessEngineProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            OnRaiseErrorReceived(sender, e);
+        }
+
+        private void _chessEngineProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            OnRaiseDataReceived(sender, e);
+        }
+
+        /// <summary>
+        /// Starts the chess engine process and redirects standard error, input and output since UCI chess engines
+        /// use standard input and output to communicate via text commands.
+        /// </summary>
+        private void StartChessEngine(string chessEnginePath)
+        {
+            if (string.IsNullOrWhiteSpace(chessEnginePath))
+            {
+                throw new ChessterEngineException(Messages.ChessEnginePathNotSupplied);
+            }
+            _chessEngineProcess = new Process();
+            _chessEngineProcess.StartInfo.FileName = chessEnginePath;
+            _chessEngineProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(_chessEngineProcess.StartInfo.FileName);
+            _chessEngineProcess.StartInfo.UseShellExecute = false;
+            _chessEngineProcess.StartInfo.CreateNoWindow = true;
+            _chessEngineProcess.StartInfo.RedirectStandardError = true;
+            _chessEngineProcess.StartInfo.RedirectStandardInput = true;
+            _chessEngineProcess.StartInfo.RedirectStandardOutput = true;
+            _chessEngineProcess.OutputDataReceived += _chessEngineProcess_OutputDataReceived;
+            _chessEngineProcess.ErrorDataReceived += _chessEngineProcess_ErrorDataReceived;
+            _chessEngineProcess.Start();
+            _chessEngineProcess.BeginErrorReadLine();
+            _chessEngineProcess.BeginOutputReadLine();
         }
     }
 }
