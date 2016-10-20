@@ -66,6 +66,8 @@ namespace ChessterUci
                 //
                 if (_chessEngineProcess != null)
                 {
+                    _chessEngineProcess.OutputDataReceived -= _chessEngineProcess_OutputDataReceived;
+                    _chessEngineProcess.ErrorDataReceived -= _chessEngineProcess_ErrorDataReceived;
                     _chessEngineProcess.Close();
                     _chessEngineProcess.Dispose();
                 }

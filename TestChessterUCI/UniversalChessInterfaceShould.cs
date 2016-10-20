@@ -31,7 +31,7 @@ namespace TestChessterUCI
                 uci.InitializationPeriod = 1;
                 uci.InitializeEngine();
 
-                Thread.Sleep(2000);
+                Thread.Sleep(1700);
                 Assert.True(uci.InitializationComplete, "The engine failed to fully initialize.");
             }
         }
@@ -44,7 +44,7 @@ namespace TestChessterUCI
                 uci.InitializationPeriod = 1;
                 uci.InitializeEngine();
 
-                Thread.Sleep(2000);
+                Thread.Sleep(1700);
                 Assert.True(uci.ChessEngineOptions != null, "The ChessEngineOptions are null!");
                 Assert.NotEmpty(uci.ChessEngineOptions);
             }

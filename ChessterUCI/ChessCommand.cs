@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace ChessterUci
@@ -6,7 +7,7 @@ namespace ChessterUci
     /// <summary>
     /// Interface for sending commands to the chess engine.
     /// </summary>
-    public abstract class ChessCommand
+    public abstract class ChessCommand : IDisposable
     {
         private IEngineController _engineController;
 
@@ -69,5 +70,48 @@ namespace ChessterUci
             ChessCommandTraceSource.TraceEvent(TraceEventType.Error, 0, $"EngineController_ErrorReceived data is {e.Data}.");
             throw new ChessterEngineException(e.Data);
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        /// <summary>
+        /// Disposes of this object and cleans up any dependent resources.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                    _engineController.ErrorReceived -= EngineController_ErrorReceived;
+                    _engineController = null;
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~ChessCommand() {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        /// <summary>
+        ///  This code added to correctly implement the disposable pattern.
+        /// </summary>
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
