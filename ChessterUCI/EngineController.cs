@@ -121,12 +121,18 @@ namespace ChessterUci
 
         private void _chessEngineProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            OnRaiseErrorReceived(sender, e);
+            if (!string.IsNullOrWhiteSpace(e.Data))
+            {
+                OnRaiseErrorReceived(sender, e);
+            }
         }
 
         private void _chessEngineProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            OnRaiseDataReceived(sender, e);
+            if (!string.IsNullOrWhiteSpace(e.Data))
+            {
+                OnRaiseDataReceived(sender, e);
+            }
         }
 
         /// <summary>
