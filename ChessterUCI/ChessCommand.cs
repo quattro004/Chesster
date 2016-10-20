@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace ChessterUci
 {
@@ -22,6 +23,7 @@ namespace ChessterUci
                 throw new ChessterEngineException(Messages.NullEngineController);
             }
             _engineController = engineController;
+            _engineController.ErrorReceived += EngineController_ErrorReceived;
         }
 
         /// <summary>
@@ -38,11 +40,11 @@ namespace ChessterUci
         /// <summary>
         /// Sends this command to the chess engine.
         /// </summary>
-        public void SendCommand()
+        public async Task SendCommand()
         {
             EnsureEngineIsRunning();
             ChessCommandTraceSource.TraceInformation($"Sending the {CommandText} command to the chess engine.");
-            _engineController.SendCommand(CommandText);
+            await _engineController.SendCommand(CommandText);
         }
 
         /// <summary>
@@ -55,6 +57,17 @@ namespace ChessterUci
             {
                 throw new ChessterEngineException(Messages.ChessEngineNotRunning);
             }
+        }
+
+        /// <summary>
+        /// Occurs when an error is received from the engine controller after sending this command.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EngineController_ErrorReceived(object sender, DataReceivedEventArgs e)
+        {
+            ChessCommandTraceSource.TraceEvent(TraceEventType.Error, 0, $"EngineController_ErrorReceived data is {e.Data}.");
+            throw new ChessterEngineException(e.Data);
         }
     }
 }

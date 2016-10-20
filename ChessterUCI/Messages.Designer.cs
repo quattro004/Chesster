@@ -61,6 +61,15 @@ namespace ChessterUci {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The chess engine didn&apos;t respond with the uciok command during initialization within the specified time period..
+        /// </summary>
+        internal static string ChessEngineDidntInitialize {
+            get {
+                return ResourceManager.GetString("ChessEngineDidntInitialize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The chess engine is not currently running..
         /// </summary>
         internal static string ChessEngineNotRunning {
@@ -75,6 +84,15 @@ namespace ChessterUci {
         internal static string ChessEnginePathNotSupplied {
             get {
                 return ResourceManager.GetString("ChessEnginePathNotSupplied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify a time period greater than zero..
+        /// </summary>
+        internal static string InvalidInitializationPeriod {
+            get {
+                return ResourceManager.GetString("InvalidInitializationPeriod", resourceCulture);
             }
         }
         

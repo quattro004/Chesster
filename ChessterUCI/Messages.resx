@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChessEngineDidntInitialize" xml:space="preserve">
+    <value>The chess engine didn't respond with the uciok command during initialization within the specified time period.</value>
+  </data>
   <data name="ChessEngineNotRunning" xml:space="preserve">
     <value>The chess engine is not currently running.</value>
   </data>
   <data name="ChessEnginePathNotSupplied" xml:space="preserve">
     <value>The chess engine executable path was not supplied.</value>
+  </data>
+  <data name="InvalidInitializationPeriod" xml:space="preserve">
+    <value>Specify a time period greater than zero.</value>
   </data>
   <data name="NullEngineController" xml:space="preserve">
     <value>The engine controller cannot be null.</value>

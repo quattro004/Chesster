@@ -51,12 +51,15 @@
     <Compile Include="EngineController.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ChessCommand.cs" />
+    <Compile Include="IdData.cs" />
     <Compile Include="IEngineController.cs" />
     <Compile Include="Messages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
+    <Compile Include="OptionCommand.cs" />
+    <Compile Include="OptionData.cs" />
     <Compile Include="UciCommand.cs" />
     <Compile Include="UniversalChessInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,7 +71,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

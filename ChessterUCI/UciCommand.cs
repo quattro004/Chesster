@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace ChessterUci
 {
@@ -14,6 +16,10 @@ namespace ChessterUci
     /// </summary>
     public class UciCommand : ChessCommand
     {
+        private const string UCIOK = "uciok";
+        private const string ID = "id";
+        private const string OPTION = "option";
+
         /// <summary>
         /// Initializes the "uci" command for use with the engine controller.
         /// </summary>
@@ -26,7 +32,6 @@ namespace ChessterUci
                 throw new ChessterEngineException(Messages.NullEngineController);
             }
             engineController.DataReceived += EngineController_DataReceived;
-            engineController.ErrorReceived += EngineController_ErrorReceived;
         }
 
         /// <summary>
@@ -41,14 +46,14 @@ namespace ChessterUci
         }
 
         /// <summary>
-        /// Occurs when an error is received from the engine controller after sending this command.
+        /// Options received after initialization.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void EngineController_ErrorReceived(object sender, DataReceivedEventArgs e)
-        {
-            ChessCommandTraceSource.TraceEvent(TraceEventType.Error, 0, $"EngineController_ErrorReceived data is {e.Data}.");
-        }
+        public Dictionary<string, OptionData> Options { get; private set; } = new Dictionary<string, OptionData>();
+
+        /// <summary>
+        /// Indicates whether the engine intialized successfully.
+        /// </summary>
+        public bool ReceivedUciOk { get; private set; }
 
         /// <summary>
         /// Occurs when data is received from the engine controller after sending this command.
@@ -58,6 +63,114 @@ namespace ChessterUci
         private void EngineController_DataReceived(object sender, DataReceivedEventArgs e)
         {
             ChessCommandTraceSource.TraceInformation($"EngineController_DataReceived data is {e.Data}.");
+            if (e.Data != null)
+            {
+                if (e.Data.StartsWith(ID))
+                {
+                    ParseIdName(e.Data);
+                    ParseIdAuthor(e.Data);
+                }
+                else if (e.Data.StartsWith(OPTION))
+                {
+                    ParseOption(e.Data);
+                }
+                else if (e.Data.StartsWith(UCIOK))
+                {
+                    ReceivedUciOk = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Parses options that the chess engine supports. They will be added to the Options property.
+        /// </summary>
+        /// <param name="data"></param>
+        private void ParseOption(string data)
+        {
+            var containsDefaultOption = data.Contains("default");
+            var containsMaxOption = data.Contains("max");
+            var pattern = @"name (?<name>.*) type (?<type>.*)"; // Start off with the simplest pattern.
+            //
+            // If the data contains max then all options are included.
+            if (containsMaxOption)
+            {
+                pattern = @"name (?<name>.*) type (?<type>.*) default (?<default>.*) min (?<min>.*) max (?<max>.*)";
+            }
+            else if (containsDefaultOption)
+            {
+                pattern = @"name (?<name>.*) type (?<type>.*) default (?<default>.*)";
+            }
+
+            var options = Regex.Match(data, pattern);
+
+            if(options.Groups != null)
+            {
+                var optionData = new OptionData();
+                if (options.Groups["name"].Success)
+                {
+                    optionData.Name = options.Groups["name"].Value;
+                }
+                if (options.Groups["type"].Success)
+                {
+                    optionData.OptionType = options.Groups["type"].Value;
+                }
+                if (options.Groups["default"].Success)
+                {
+                    optionData.Default = options.Groups["default"].Value;
+                }
+                if (options.Groups["min"].Success)
+                {
+                    optionData.Min = options.Groups["min"].Value;
+                }
+                if (options.Groups["max"].Success)
+                {
+                    optionData.Max = options.Groups["max"].Value;
+                }
+                Options.Add(string.Format("{0}{1}", OPTION, Regex.Replace(optionData.Name, @"\s+", string.Empty)), optionData);
+            }
+        }
+
+        /// <summary>
+        /// Adds the Id option's name component.
+        /// </summary>
+        /// <param name="data"></param>
+        private void ParseIdName(string data)
+        {
+            var name = new Regex("id name ");
+
+            if (name.IsMatch(data))
+            {
+                var value = name.Split(data);
+                if(value.Length > 1)
+                {
+                    var optionData = new OptionData();
+                    optionData.Name = ID;
+                    optionData.Id = new IdData { Name = value[1] };
+                    Options.Add(ID, optionData);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds the Id option's author component.
+        /// </summary>
+        /// <param name="data"></param>
+        private void ParseIdAuthor(string data)
+        {
+            var name = new Regex("id author ");
+
+            if (name.IsMatch(data))
+            {
+                var value = name.Split(data);
+                if (value.Length > 1)
+                {
+                    OptionData optionData;
+                    if (Options.TryGetValue(ID, out optionData))
+                    {
+                        optionData.Id.Author = value[1];
+                    }
+                }
+            }
         }
     }
 }

@@ -28,5 +28,9 @@ namespace ChessterUci
         /// Sends the specified command to the chess engine.
         /// </summary>
         Task SendCommand(string command);
+        /// <summary>
+        /// Kills the process that is hosting the chess engine.
+        /// </summary>
+        void KillEngine();
     }
 }

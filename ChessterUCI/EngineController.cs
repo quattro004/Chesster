@@ -64,8 +64,11 @@ namespace ChessterUci
             {
                 // Free any managed objects here. 
                 //
-                _chessEngineProcess.Close();
-                _chessEngineProcess.Dispose();
+                if (_chessEngineProcess != null)
+                {
+                    _chessEngineProcess.Close();
+                    _chessEngineProcess.Dispose();
+                }
             }
 
             // Free any unmanaged objects here. 
@@ -80,14 +83,7 @@ namespace ChessterUci
         /// <param name="e">Event arguments received from the chess engine.</param>
         protected virtual void OnRaiseDataReceived(object sender, DataReceivedEventArgs e)
         {
-            // Make a temporary copy of the event to avoid possibility of 
-            // a race condition if the last subscriber unsubscribes 
-            // immediately after the null check and before the event is raised.
-            var handler = DataReceived;
-            if (handler != null)
-            {
-                handler(sender, e);
-            }
+            DataReceived?.Invoke(sender, e);
         }
 
         /// <summary>
@@ -97,14 +93,7 @@ namespace ChessterUci
         /// <param name="e">Event arguments received from the chess engine.</param>
         protected virtual void OnRaiseErrorReceived(object sender, DataReceivedEventArgs e)
         {
-            // Make a temporary copy of the event to avoid possibility of 
-            // a race condition if the last subscriber unsubscribes 
-            // immediately after the null check and before the event is raised.
-            var handler = ErrorReceived;
-            if (handler != null)
-            {
-                handler(sender, e);
-            }
+            ErrorReceived?.Invoke(sender, e);
         }
 
         /// <summary>
@@ -117,6 +106,16 @@ namespace ChessterUci
         {
             await _chessEngineProcess.StandardInput.WriteLineAsync(command);
         }
+
+        public void KillEngine()
+        {
+            if(_chessEngineProcess != null)
+            {
+                _chessEngineProcess.Kill();
+            }
+        }
+
+        #region Private Methods
 
         private void _chessEngineProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
@@ -152,5 +151,7 @@ namespace ChessterUci
             _chessEngineProcess.BeginErrorReadLine();
             _chessEngineProcess.BeginOutputReadLine();
         }
+
+        #endregion
     }
 }
