@@ -24,29 +24,40 @@ namespace TestChessterUCI
         }
 
         [Fact]
-        public void receive_uciok_after_initialization()
+        public async void receive_uciok_after_initialization()
         {
             using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
             {
-                uci.InitializationPeriod = 1;
-                uci.InitializeEngine();
+                await uci.InitializeEngine();
 
-                Thread.Sleep(1700);
                 Assert.True(uci.InitializationComplete, "The engine failed to fully initialize.");
             }
         }
 
         [Fact]
-        public void contain_options_after_initialization()
+        public async void contain_options_after_initialization()
         {
             using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
             {
-                uci.InitializationPeriod = 1;
-                uci.InitializeEngine();
+                await uci.InitializeEngine();
 
-                Thread.Sleep(1700);
                 Assert.True(uci.ChessEngineOptions != null, "The ChessEngineOptions are null!");
                 Assert.NotEmpty(uci.ChessEngineOptions);
+            }
+        }
+
+        [Fact]
+        public async void receive_readyok_after_sending_isready()
+        {
+            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            {
+                await uci.InitializeEngine();
+                using (var isReadyCommand = new IsReadyCommand(uci.ChessEngineController))
+                {
+                    await isReadyCommand.SendCommand();
+
+                    Assert.True(isReadyCommand.ReceivedReadyOk);
+                }
             }
         }
     }

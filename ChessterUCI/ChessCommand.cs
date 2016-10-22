@@ -36,7 +36,19 @@ namespace ChessterUci
         /// <summary>
         /// Used to trace information at runtime regarding chess command execution.
         /// </summary>
-        public TraceSource ChessCommandTraceSource { get; } = new TraceSource("ChessCommandTraceSource");
+        internal TraceSource ChessCommandTraceSource { get; } = new TraceSource("ChessCommandTraceSource");
+
+        /// <summary>
+        /// Checks to see if the chess engine response is null or blank.
+        /// </summary>
+        /// <param name="chessEngineResponse">Response to a command from the chess engine.</param>
+        /// <returns><see cref="bool"/> indicating a valid response.</returns>
+        internal bool ResponseIsNotNullOrEmpty(string chessEngineResponse)
+        {
+            ChessCommandTraceSource.TraceInformation($"Data received: {chessEngineResponse}.");
+
+            return !string.IsNullOrWhiteSpace(chessEngineResponse);
+        }
 
         /// <summary>
         /// Sends this command to the chess engine.

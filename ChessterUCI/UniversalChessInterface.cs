@@ -11,15 +11,12 @@ namespace ChessterUci
     /// </summary>
     public class UniversalChessInterface : IDisposable
     {
-        /// <summary>
-        /// <see cref="IEngineController"/> which controls and communicates with the chess engine process.
-        /// </summary>
-        private IEngineController ChessEngineController { get; set; }
-
         private TraceSource _universalChessInterfaceTraceSource;
         private Timer _initializationTimer;
         private int _initializationPeriod = 10000; // 10 seconds
         private bool _initializationComplete;
+
+        #region Properties
 
         /// <summary>
         /// Performs initialization for the chess interface to the engine.
@@ -88,20 +85,27 @@ namespace ChessterUci
         public Dictionary<string, OptionData> ChessEngineOptions { get; private set; }
 
         /// <summary>
+        /// Implementation of the <see cref="IEngineController"/> which manages the chess
+        /// engine process.
+        /// </summary>
+        public IEngineController ChessEngineController { get; private set; }
+
+        #endregion
+
+        /// <summary>
         /// Performs initialization of the chess engine by sending the uci command.
         /// </summary>
-        public void InitializeEngine()
+        public async Task InitializeEngine()
         {
-            SetUciMode();
+            await SetUciMode();
         }
-
 
         #region Private Methods
 
         /// <summary>
         /// Sends an asynchronous command to the chess engine to enable UCI mode.
         /// </summary>
-        private async void SetUciMode()
+        private async Task SetUciMode()
         {
             var uciCommand = new UciCommand(ChessEngineController);
             _universalChessInterfaceTraceSource.TraceInformation("Sending the UCI command");

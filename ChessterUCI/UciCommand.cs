@@ -27,10 +27,6 @@ namespace ChessterUci
         /// process.</param>
         public UciCommand(IEngineController engineController) : base(engineController)
         {
-            if (engineController == null)
-            {
-                throw new ChessterEngineException(Messages.NullEngineController);
-            }
             engineController.DataReceived += EngineController_DataReceived;
         }
 
@@ -62,19 +58,20 @@ namespace ChessterUci
         /// <param name="e"></param>
         private void EngineController_DataReceived(object sender, DataReceivedEventArgs e)
         {
-            ChessCommandTraceSource.TraceInformation($"EngineController_DataReceived data is {e.Data}.");
-            if (e.Data != null)
+            var data = e.Data;
+
+            if (ResponseIsNotNullOrEmpty(data))
             {
-                if (e.Data.StartsWith(ID))
+                if (data.StartsWith(ID))
                 {
-                    ParseIdName(e.Data);
-                    ParseIdAuthor(e.Data);
+                    ParseIdName(data);
+                    ParseIdAuthor(data);
                 }
-                else if (e.Data.StartsWith(OPTION))
+                else if (data.StartsWith(OPTION))
                 {
-                    ParseOption(e.Data);
+                    ParseOption(data);
                 }
-                else if (e.Data.StartsWith(UCIOK))
+                else if (data.StartsWith(UCIOK))
                 {
                     ReceivedUciOk = true;
                 }
