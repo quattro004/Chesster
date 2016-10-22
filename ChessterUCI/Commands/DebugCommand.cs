@@ -37,7 +37,7 @@ namespace ChessterUci.Commands
         {
             get
             {
-                return DebugModeOn ? "debug on1" : "debug off1";
+                return DebugModeOn ? "debug on" : "debug off";
             }
         }
 
