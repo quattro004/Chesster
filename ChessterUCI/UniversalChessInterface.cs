@@ -28,9 +28,9 @@ namespace ChessterUci
         }
 
         /// <summary>
-        /// Determines whether or not the chess engine is currently running.
+        /// Determines whether or not the chess engine process is currently running.
         /// </summary>
-        public bool IsEngineRunning
+        public bool IsEngineProcessRunning
         {
             get
             {

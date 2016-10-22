@@ -19,7 +19,7 @@ namespace TestChessterUCI
         {
             using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
             {
-                Assert.True(uci.IsEngineRunning, "The engine failed to start.");
+                Assert.True(uci.IsEngineProcessRunning, "The engine failed to start.");
             }
         }
 
