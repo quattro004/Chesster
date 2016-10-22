@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChessterUci
+namespace ChessterUci.Commands
 {
     /// <summary>
     /// This is used to synchronize the engine with the GUI. When the GUI has sent a command or

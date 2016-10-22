@@ -1,4 +1,4 @@
-﻿namespace ChessterUci
+﻿namespace ChessterUci.Commands
 {
     /// <summary>
     /// Contains data for getting and setting options in the chess engine.

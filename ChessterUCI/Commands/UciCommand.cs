@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-namespace ChessterUci
+namespace ChessterUci.Commands
 {
     /// <summary>
     /// Tell engine to use the uci (universal chess interface),	this will be sent

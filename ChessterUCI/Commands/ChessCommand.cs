@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace ChessterUci
+namespace ChessterUci.Commands
 {
     /// <summary>
     /// Interface for sending commands to the chess engine.
@@ -79,8 +79,11 @@ namespace ChessterUci
         /// <param name="e"></param>
         private void EngineController_ErrorReceived(object sender, DataReceivedEventArgs e)
         {
-            ChessCommandTraceSource.TraceEvent(TraceEventType.Error, 0, $"EngineController_ErrorReceived data is {e.Data}.");
-            throw new ChessterEngineException(e.Data);
+            ChessCommandTraceSource.TraceEvent(TraceEventType.Error, 0, $"ErrorReceived: {e.Data}.");
+            if (ResponseIsNotNullOrEmpty(e.Data))
+            {
+                throw new ChessterEngineException(e.Data);
+            }
         }
 
         #region IDisposable Support

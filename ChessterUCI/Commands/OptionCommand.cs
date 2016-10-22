@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ChessterUci
+namespace ChessterUci.Commands
 {
     /// <summary>
     /// Used to get and set options on the chess engine.

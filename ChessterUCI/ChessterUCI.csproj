@@ -48,20 +48,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChessterException.cs" />
+    <Compile Include="Commands\DebugCommand.cs" />
     <Compile Include="EngineController.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="ChessCommand.cs" />
-    <Compile Include="IdData.cs" />
+    <Compile Include="Commands\ChessCommand.cs" />
+    <Compile Include="Commands\IdData.cs" />
     <Compile Include="IEngineController.cs" />
-    <Compile Include="IsReadyCommand.cs" />
+    <Compile Include="Commands\IsReadyCommand.cs" />
     <Compile Include="Messages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
-    <Compile Include="OptionCommand.cs" />
-    <Compile Include="OptionData.cs" />
-    <Compile Include="UciCommand.cs" />
+    <Compile Include="Commands\OptionCommand.cs" />
+    <Compile Include="Commands\OptionData.cs" />
+    <Compile Include="Commands\UciCommand.cs" />
     <Compile Include="UniversalChessInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

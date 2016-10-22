@@ -1,4 +1,4 @@
-﻿namespace ChessterUci
+﻿namespace ChessterUci.Commands
 {
     /// <summary>
     /// Contains data that identifies the chess engine.
