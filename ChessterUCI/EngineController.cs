@@ -68,8 +68,12 @@ namespace ChessterUci
                 {
                     _chessEngineProcess.OutputDataReceived -= _chessEngineProcess_OutputDataReceived;
                     _chessEngineProcess.ErrorDataReceived -= _chessEngineProcess_ErrorDataReceived;
-                    _chessEngineProcess.Close();
-                    _chessEngineProcess.Dispose();
+                    _chessEngineProcess.CancelErrorRead();
+                    _chessEngineProcess.CancelOutputRead();
+                    if (!_chessEngineProcess.WaitForExit(250))
+                    {
+                        _chessEngineProcess.Dispose();
+                    }
                 }
             }
 
@@ -131,7 +135,14 @@ namespace ChessterUci
         {
             if (!string.IsNullOrWhiteSpace(e.Data))
             {
-                OnRaiseDataReceived(sender, e);
+                if (e.Data.StartsWith("Unknown command"))
+                {
+                    OnRaiseErrorReceived(sender, e);
+                }
+                else
+                {
+                    OnRaiseDataReceived(sender, e);
+                }
             }
         }
 
@@ -156,6 +167,7 @@ namespace ChessterUci
             _chessEngineProcess.OutputDataReceived += _chessEngineProcess_OutputDataReceived;
             _chessEngineProcess.ErrorDataReceived += _chessEngineProcess_ErrorDataReceived;
             _chessEngineProcess.Start();
+            _chessEngineProcess.StandardInput.AutoFlush = true;
             _chessEngineProcess.BeginErrorReadLine();
             _chessEngineProcess.BeginOutputReadLine();
         }

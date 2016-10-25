@@ -23,11 +23,28 @@ namespace ChessterUci.Commands
         /// <summary>
         /// Initializes the "uci" command for use with the engine controller.
         /// </summary>
-        /// <param name="engineController">Engine controller which manages the chess engine
-        /// process.</param>
-        public UciCommand(IEngineController engineController) : base(engineController)
+        public UciCommand() : base()
         {
-            engineController.DataReceived += EngineController_DataReceived;
+        }
+
+        /// <summary>
+        /// Reference to the chess engine controller which manages the actual process.
+        /// </summary>
+        internal override IEngineController ChessEngineController
+        {
+            get
+            {
+                return base.ChessEngineController;
+            }
+
+            set
+            {
+                base.ChessEngineController = value;
+                if (base.ChessEngineController != null)
+                {
+                    base.ChessEngineController.DataReceived += EngineController_DataReceived;
+                }
+            }
         }
 
         /// <summary>
@@ -47,9 +64,30 @@ namespace ChessterUci.Commands
         public Dictionary<string, OptionData> Options { get; private set; } = new Dictionary<string, OptionData>();
 
         /// <summary>
-        /// Indicates whether the engine intialized successfully.
+        /// Callback that gets invoked after sending a command.
         /// </summary>
-        public bool ReceivedUciOk { get; private set; }
+        /// <param name="state"></param>
+        protected override void CommandTimerCallback(object state)
+        {
+            // The base class controls the timer so need to call this first.
+            base.CommandTimerCallback(state);
+        }
+
+        /// <summary>
+        /// Performs disposal for this command.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (ChessEngineController != null)
+                {
+                    ChessEngineController.DataReceived -= EngineController_DataReceived;
+                }
+            }
+            base.Dispose(disposing);
+        }
 
         /// <summary>
         /// Occurs when data is received from the engine controller after sending this command.
@@ -73,7 +111,7 @@ namespace ChessterUci.Commands
                 }
                 else if (data.StartsWith(UCIOK))
                 {
-                    ReceivedUciOk = true;
+                    CommandResponseReceived = true;
                 }
             }
         }

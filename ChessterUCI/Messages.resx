@@ -126,8 +126,11 @@
   <data name="ChessEnginePathNotSupplied" xml:space="preserve">
     <value>The chess engine executable path was not supplied.</value>
   </data>
-  <data name="InvalidInitializationPeriod" xml:space="preserve">
+  <data name="InvalidTimePeriod" xml:space="preserve">
     <value>Specify a time period greater than zero.</value>
+  </data>
+  <data name="NullCommand" xml:space="preserve">
+    <value>The command cannot be null.</value>
   </data>
   <data name="NullEngineController" xml:space="preserve">
     <value>The engine controller cannot be null.</value>

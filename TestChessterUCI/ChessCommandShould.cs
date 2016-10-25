@@ -1,43 +1,51 @@
-﻿using ChessterUci;
-using ChessterUci.Commands;
-using System.Configuration;
+﻿using ChessterUci.Commands;
 using Xunit;
+using System;
+using System.Threading.Tasks;
+using ChessterUci;
 
 namespace TestChessterUCI
 {
     public class ChessCommandShould
     {
         [Fact]
-        public async void receive_readyok_after_sending_isready()
+        public async Task receive_readyok_after_sending_isready()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            try
             {
-                await uci.InitializeEngine();
-                using (var isReadyCommand = new IsReadyCommand(uci.ChessEngineController))
-                {
-                    await isReadyCommand.SendCommand();
+                await TestUtility.PrepareUniversalChessInterface();
 
-                    Assert.True(isReadyCommand.ReceivedReadyOk);
+                using (var isReadyCommand = new IsReadyCommand())
+                {
+                    await TestUtility.UciObject.SendCommand(isReadyCommand);
+                    UniversalChessInterface.WaitForResponse(isReadyCommand);
+
+                    Assert.True(isReadyCommand.CommandResponseReceived);
                 }
             }
+            finally
+            {
+                TestUtility.UciObject.Dispose();
+            } 
         }
 
         [Fact]
-        public async void allow_debug_mode_to_be_toggled()
+        public async Task error_when_engine_doesnt_recognize_command()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            try
             {
-                await uci.InitializeEngine();
-                using (var debugCommand = new DebugCommand(uci.ChessEngineController))
+                await TestUtility.PrepareUniversalChessInterface();
+                using (var bogusCommand = new BogusCommand())
                 {
-                    Assert.DoesNotThrow(async () =>
-                    {
-                        debugCommand.DebugModeOn = true;
-                        await debugCommand.SendCommand();
-                        debugCommand.DebugModeOn = false;
-                        await debugCommand.SendCommand();
-                    });
+                    await TestUtility.UciObject.SendCommand(bogusCommand);
+                    UniversalChessInterface.WaitForResponse(bogusCommand);
+
+                    Assert.True(bogusCommand.ErrorText.StartsWith("Unknown command"));
                 }
+            }
+            finally
+            {
+                TestUtility.UciObject.Dispose();
             }
         }
     }

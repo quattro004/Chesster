@@ -1,5 +1,8 @@
 ﻿using ChessterUci;
+using System;
 using System.Configuration;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace TestChessterUCI
@@ -16,25 +19,31 @@ namespace TestChessterUCI
         }
 
         [Fact]
-        public async void receive_uciok_after_initialization()
+        public async Task receive_uciok_after_setting_uci_mode()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            try
             {
-                await uci.InitializeEngine();
-
-                Assert.True(uci.InitializationComplete, "The engine failed to fully initialize.");
+                await TestUtility.PrepareUniversalChessInterface();
+                Assert.True(TestUtility.UciObject.UciModeComplete, "The engine failed to fully initialize.");
+            }
+            finally
+            {
+                TestUtility.UciObject.Dispose();
             }
         }
 
         [Fact]
-        public async void contain_options_after_initialization()
+        public async Task contain_options_after_initialization()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            try
             {
-                await uci.InitializeEngine();
-
-                Assert.True(uci.ChessEngineOptions != null, "The ChessEngineOptions are null!");
-                Assert.NotEmpty(uci.ChessEngineOptions);
+                await TestUtility.PrepareUniversalChessInterface();
+                Assert.NotNull(TestUtility.UciObject.ChessEngineOptions);
+                Assert.NotEmpty(TestUtility.UciObject.ChessEngineOptions);
+            }
+            finally
+            {
+                TestUtility.UciObject.Dispose();
             }
         }
     }

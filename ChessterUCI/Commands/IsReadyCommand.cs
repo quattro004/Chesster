@@ -23,11 +23,8 @@ namespace ChessterUci.Commands
         /// <summary>
         /// Initializes the "isready" command for use with the engine controller.
         /// </summary>
-        /// <param name="engineController">Engine controller which manages the chess engine
-        /// process.</param>
-        public IsReadyCommand(IEngineController engineController) : base(engineController)
+        public IsReadyCommand() : base()
         {
-            engineController.DataReceived += EngineController_DataReceived;
         }
 
         /// <summary>
@@ -42,10 +39,40 @@ namespace ChessterUci.Commands
         }
 
         /// <summary>
-        /// Sent when the engine has received an "isready" command and has
-        /// processed all input and is ready to accept new commands now.
+        /// Reference to the chess engine controller which manages the actual process.
         /// </summary>
-        public bool ReceivedReadyOk { get; private set; }
+        internal override IEngineController ChessEngineController
+        {
+            get
+            {
+                return base.ChessEngineController;
+            }
+
+            set
+            {
+                base.ChessEngineController = value;
+                if (base.ChessEngineController != null)
+                {
+                    base.ChessEngineController.DataReceived += EngineController_DataReceived;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs disposal for this command.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (ChessEngineController != null)
+                {
+                    ChessEngineController.DataReceived -= EngineController_DataReceived;
+                }
+            }
+            base.Dispose(disposing);
+        }
 
         private void EngineController_DataReceived(object sender, DataReceivedEventArgs e)
         {
@@ -53,7 +80,7 @@ namespace ChessterUci.Commands
             {
                 if (e.Data.StartsWith(READYOK))
                 {
-                    ReceivedReadyOk = true;
+                    CommandResponseReceived = true;
                 }
             }
         }

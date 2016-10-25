@@ -90,9 +90,18 @@ namespace ChessterUci {
         /// <summary>
         ///   Looks up a localized string similar to Specify a time period greater than zero..
         /// </summary>
-        internal static string InvalidInitializationPeriod {
+        internal static string InvalidTimePeriod {
             get {
-                return ResourceManager.GetString("InvalidInitializationPeriod", resourceCulture);
+                return ResourceManager.GetString("InvalidTimePeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The command cannot be null..
+        /// </summary>
+        internal static string NullCommand {
+            get {
+                return ResourceManager.GetString("NullCommand", resourceCulture);
             }
         }
         

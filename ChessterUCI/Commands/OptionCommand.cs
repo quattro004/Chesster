@@ -25,15 +25,8 @@ namespace ChessterUci.Commands
         /// <summary>
         /// Initializes the command used to get and set options on the chess engine.
         /// </summary>
-        /// <param name="engineController">Engine controller which manages the chess engine
-        /// process.</param>
-        public OptionCommand(IEngineController engineController) : base(engineController)
+        public OptionCommand() : base()
         {
-            if (engineController == null)
-            {
-                throw new ChessterEngineException(Messages.NullEngineController);
-            }
-            engineController.DataReceived += EngineController_DataReceived;
         }
 
         /// <summary>
@@ -50,6 +43,26 @@ namespace ChessterUci.Commands
         /// List of <see cref="OptionData"/> used when getting or setting the options.
         /// </summary>
         public IEnumerable<OptionData> OptionValues { get; set; }
+
+        /// <summary>
+        /// Reference to the chess engine controller which manages the actual process.
+        /// </summary>
+        internal override IEngineController ChessEngineController
+        {
+            get
+            {
+                return base.ChessEngineController;
+            }
+
+            set
+            {
+                base.ChessEngineController = value;
+                if (base.ChessEngineController != null)
+                {
+                    base.ChessEngineController.DataReceived += EngineController_DataReceived;
+                }
+            }
+        }
 
         /// <summary>
         /// Occurs when data is received from the engine controller after sending this command.

@@ -13,9 +13,7 @@ namespace ChessterUci
     public class UniversalChessInterface : IDisposable
     {
         private TraceSource _universalChessInterfaceTraceSource;
-        private Timer _initializationTimer;
-        private int _initializationPeriod = 10000; // 10 seconds
-        private bool _initializationComplete;
+        private bool _disposedValue = false; // To detect redundant calls
 
         #region Properties
 
@@ -39,49 +37,12 @@ namespace ChessterUci
             }
         }
         /// <summary>
-        /// Specifies whether the chess engine has finished initializing.
+        /// Specifies whether the chess engine has finished setting up UCI mode.
         /// </summary>
-        public bool InitializationComplete
-        {
-            get
-            {
-                return _initializationComplete;
-            }
-            private set
-            {
-                _initializationComplete = value;
-                if (_initializationComplete)
-                {
-                    if (_initializationTimer != null)
-                    {
-                        _initializationTimer.Change(Timeout.Infinite, _initializationPeriod); // Stop the timer.
-                    }
-                }
-            }
-        }
+        public bool UciModeComplete { get; private set; }
 
         /// <summary>
-        /// Amount of time in seconds to wait if the chess engine doesn't respond with uciok before 
-        /// terminating the process and throwing an exception. The default is 10 seconds.
-        /// </summary>
-        public int InitializationPeriod
-        {
-            get
-            {
-                return _initializationPeriod / 1000;
-            }
-            set
-            {
-                _initializationPeriod = value * 1000;
-                if(_initializationPeriod <= 0)
-                {
-                    throw new ChessterEngineException(Messages.InvalidInitializationPeriod);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Options received after initialization.
+        /// Options received after setting up UCI mode.
         /// </summary>
         public Dictionary<string, OptionData> ChessEngineOptions { get; private set; }
 
@@ -94,86 +55,86 @@ namespace ChessterUci
         #endregion
 
         /// <summary>
-        /// Performs initialization of the chess engine by sending the uci command.
-        /// </summary>
-        public async Task InitializeEngine()
-        {
-            await SetUciMode();
-        }
-
-        #region Private Methods
-
-        /// <summary>
         /// Sends an asynchronous command to the chess engine to enable UCI mode.
+        /// When successful the <see cref="ChessEngineOptions"/> property will contain
+        /// the options that the engine supports.
         /// </summary>
-        private async Task SetUciMode()
+        /// <remarks><see cref="UciCommand"/> for more information.</remarks>
+        public async Task SetUciMode()
         {
-            var uciCommand = new UciCommand(ChessEngineController);
-            _universalChessInterfaceTraceSource.TraceInformation("Sending the UCI command");
-            await uciCommand.SendCommand();
-
-            _universalChessInterfaceTraceSource.TraceInformation("Starting InitializationPeriod timer");
-            _initializationTimer = new Timer(new TimerCallback(InitializationTimerCallback), uciCommand, 
-                _initializationPeriod, _initializationPeriod);
-        }
-
-        /// <summary>
-        /// Fires then the InitializationPeriod has expired.
-        /// </summary>
-        /// <param name="state"></param>
-        private void InitializationTimerCallback(object state)
-        {
-            _universalChessInterfaceTraceSource.TraceInformation("InitializationTimerCallback()");
-            _initializationTimer.Change(Timeout.Infinite, _initializationPeriod); // Stop the timer.
-
-            var uciCommand = state as UciCommand;
-            if (uciCommand != null)
+            using (var uciCommand = new UciCommand())
             {
-                InitializationComplete = uciCommand.ReceivedUciOk;
-                _universalChessInterfaceTraceSource.TraceInformation("InitializationComplete = {0}", InitializationComplete);
-
-                if (!InitializationComplete)
+                await SendCommand(uciCommand);
+                WaitForResponse(uciCommand);
+                if (uciCommand.CommandResponseReceived)
                 {
-                    // Initialization wasn't completed by the chess engine within the specified
-                    // time period so kill the process.
-                     _universalChessInterfaceTraceSource.TraceInformation("Killing the chess engine");
-                    ChessEngineController.KillEngine();
-                    throw new ChessterEngineException(Messages.ChessEngineDidntInitialize);
+                    ChessEngineOptions = uciCommand.Options;
+                    UciModeComplete = true;
                 }
                 else
                 {
-                    ChessEngineOptions = uciCommand.Options;
+                    // Initialization wasn't completed by the chess engine within the specified
+                    // time period so kill the process.
+                    _universalChessInterfaceTraceSource.TraceInformation("Killing the chess engine process");
+                    ChessEngineController.KillEngine();
+                    _universalChessInterfaceTraceSource.TraceEvent(TraceEventType.Critical, 1,
+                        Messages.ChessEngineDidntInitialize);
+                    throw new ChessterEngineException(Messages.ChessEngineDidntInitialize);
                 }
             }
         }
 
+        /// <summary>
+        /// Waits for the command's response to be returned or the timeout period to expire.
+        /// </summary>
+        /// <param name="command"></param>
+        public static void WaitForResponse(ChessCommand command)
+        {
+            if(command == null)
+            {
+                throw new ChessterEngineException(Messages.NullCommand);
+            }
+            while (!command.CommandResponseReceived && !command.CommandTimeoutElapsed)
+            {
+                Thread.Sleep(command.TimerInterval);
+            }
+        }
+
+        /// <summary>
+        /// Sends the <paramref name="command"/> to the chess engine.
+        /// </summary>
+        /// <param name="command"><see cref="ChessCommand"/></param>
+        /// <returns><see cref="Task"/></returns>
+        public async Task SendCommand(ChessCommand command)
+        {
+            command.ChessEngineController = ChessEngineController;
+            await command.SendCommand();
+        }
+
+        #region Private Methods
+        
         #endregion
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
+        
         /// <summary>
         /// Disposes of resources.
         /// </summary>
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
                     ChessEngineController.Dispose();
-                    if (_initializationTimer != null)
-                    {
-                        _initializationTimer.Dispose();
-                    }
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

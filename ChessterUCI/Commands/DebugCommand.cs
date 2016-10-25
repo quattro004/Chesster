@@ -18,11 +18,8 @@ namespace ChessterUci.Commands
         /// <summary>
         /// Initializes the "debug" command for use with the engine controller.
         /// </summary>
-        /// <param name="engineController">Engine controller which manages the chess engine
-        /// process.</param>
-        public DebugCommand(IEngineController engineController) : base(engineController)
+        public DebugCommand() : base()
         {
-            engineController.DataReceived += EngineController_DataReceived;
         }
 
         /// <summary>
@@ -37,15 +34,7 @@ namespace ChessterUci.Commands
         {
             get
             {
-                return DebugModeOn ? "debug on" : "debug off";
-            }
-        }
-
-        private void EngineController_DataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (ResponseIsNotNullOrEmpty(e.Data))
-            {
-
+                return DebugModeOn ? "debug" : "debug off";
             }
         }
     }
