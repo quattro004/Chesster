@@ -19,11 +19,11 @@ namespace TestChessterUCI
         }
 
         [Fact]
-        public async Task receive_uciok_after_setting_uci_mode()
+        public void receive_uciok_after_setting_uci_mode()
         {
             try
             {
-                await TestUtility.PrepareUniversalChessInterface();
+                TestUtility.PrepareUniversalChessInterface();
                 Assert.True(TestUtility.UciObject.UciModeComplete, "The engine failed to fully initialize.");
             }
             finally
@@ -33,11 +33,11 @@ namespace TestChessterUCI
         }
 
         [Fact]
-        public async Task contain_options_after_initialization()
+        public void contain_options_after_initialization()
         {
             try
             {
-                await TestUtility.PrepareUniversalChessInterface();
+                TestUtility.PrepareUniversalChessInterface();
                 Assert.NotNull(TestUtility.UciObject.ChessEngineOptions);
                 Assert.NotEmpty(TestUtility.UciObject.ChessEngineOptions);
             }

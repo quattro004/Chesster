@@ -13,10 +13,10 @@ namespace TestChessterUCI
     {
         public static UniversalChessInterface UciObject { get; private set; }
 
-        public static async Task PrepareUniversalChessInterface()
+        public static void PrepareUniversalChessInterface()
         {
             UciObject = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]);
-            await UciObject.SetUciMode();
+            UciObject.SetUciMode();
         }
     }
 }

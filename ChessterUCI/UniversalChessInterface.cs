@@ -60,11 +60,11 @@ namespace ChessterUci
         /// the options that the engine supports.
         /// </summary>
         /// <remarks><see cref="UciCommand"/> for more information.</remarks>
-        public async Task SetUciMode()
+        public void SetUciMode()
         {
             using (var uciCommand = new UciCommand())
             {
-                await SendCommand(uciCommand);
+                SendCommand(uciCommand);
                 WaitForResponse(uciCommand);
                 if (uciCommand.CommandResponseReceived)
                 {
@@ -90,7 +90,7 @@ namespace ChessterUci
         /// <param name="command"></param>
         public static void WaitForResponse(ChessCommand command)
         {
-            if(command == null)
+            if(null == command)
             {
                 throw new ChessterEngineException(Messages.NullCommand);
             }
@@ -105,10 +105,14 @@ namespace ChessterUci
         /// </summary>
         /// <param name="command"><see cref="ChessCommand"/></param>
         /// <returns><see cref="Task"/></returns>
-        public async Task SendCommand(ChessCommand command)
+        public void SendCommand(ChessCommand command)
         {
+            if(null == command)
+            {
+                throw new ChessterEngineException(Messages.NullCommand);
+            }
             command.ChessEngineController = ChessEngineController;
-            await command.SendCommand();
+            command.SendCommand();
         }
 
         #region Private Methods

@@ -175,12 +175,12 @@ namespace ChessterUci.Commands
         /// <summary>
         /// Sends this command to the chess engine.
         /// </summary>
-        internal async Task SendCommand()
+        internal void SendCommand()
         {
             EnsureEngineIsRunning();
             ErrorText = default(string);
             ChessCommandTraceSource.TraceInformation($"Sending the {CommandText} command to the chess engine.");
-            await ChessEngineController.SendCommand(CommandText);
+            ChessEngineController.SendCommand(CommandText);
             _commandTimer.Change(TimerInterval, TimerInterval); // Start the timer.
         }
 

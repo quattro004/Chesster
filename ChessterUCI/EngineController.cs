@@ -70,10 +70,7 @@ namespace ChessterUci
                     _chessEngineProcess.ErrorDataReceived -= _chessEngineProcess_ErrorDataReceived;
                     _chessEngineProcess.CancelErrorRead();
                     _chessEngineProcess.CancelOutputRead();
-                    if (!_chessEngineProcess.WaitForExit(250))
-                    {
-                        _chessEngineProcess.Dispose();
-                    }
+                    _chessEngineProcess.Dispose();
                 }
             }
 
@@ -108,9 +105,9 @@ namespace ChessterUci
         /// events will fire when the engine responds.
         /// </summary>
         /// <param name="command"></param>
-        public async Task SendCommand(string command)
+        public void SendCommand(string command)
         {
-            await _chessEngineProcess.StandardInput.WriteLineAsync(command);
+            _chessEngineProcess.StandardInput.WriteLine(command);
         }
 
         public void KillEngine()

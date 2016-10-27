@@ -9,15 +9,15 @@ namespace TestChessterUCI
     public class ChessCommandShould
     {
         [Fact]
-        public async Task receive_readyok_after_sending_isready()
+        public void receive_readyok_after_sending_isready()
         {
             try
             {
-                await TestUtility.PrepareUniversalChessInterface();
+                TestUtility.PrepareUniversalChessInterface();
 
                 using (var isReadyCommand = new IsReadyCommand())
                 {
-                    await TestUtility.UciObject.SendCommand(isReadyCommand);
+                    TestUtility.UciObject.SendCommand(isReadyCommand);
                     UniversalChessInterface.WaitForResponse(isReadyCommand);
 
                     Assert.True(isReadyCommand.CommandResponseReceived);
@@ -30,14 +30,14 @@ namespace TestChessterUCI
         }
 
         [Fact]
-        public async Task error_when_engine_doesnt_recognize_command()
+        public void error_when_engine_doesnt_recognize_command()
         {
             try
             {
-                await TestUtility.PrepareUniversalChessInterface();
+                TestUtility.PrepareUniversalChessInterface();
                 using (var bogusCommand = new BogusCommand())
                 {
-                    await TestUtility.UciObject.SendCommand(bogusCommand);
+                    TestUtility.UciObject.SendCommand(bogusCommand);
                     UniversalChessInterface.WaitForResponse(bogusCommand);
 
                     Assert.True(bogusCommand.ErrorText.StartsWith("Unknown command"));
