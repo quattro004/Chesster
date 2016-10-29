@@ -174,6 +174,7 @@ namespace ChessterUci.Commands
         /// </summary>
         internal virtual void SendCommand()
         {
+            CommandResponseReceived = false;
             EnsureEngineIsRunning();
             ErrorText = default(string);
             ChessCommandTraceSource.TraceInformation($"Sending the {CommandText} command to the chess engine.");

@@ -61,7 +61,7 @@ namespace ChessterUci.Commands
         /// <summary>
         /// Options received after initialization.
         /// </summary>
-        public Dictionary<string, OptionData> Options { get; private set; } = new Dictionary<string, OptionData>();
+        public Dictionary<string, OptionData> Options { get; } = new Dictionary<string, OptionData>();
 
         /// <summary>
         /// Performs disposal for this command.

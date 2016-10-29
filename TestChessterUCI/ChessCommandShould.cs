@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+using System.Diagnostics;
 
 namespace TestChessterUCI
 {
@@ -54,9 +55,8 @@ namespace TestChessterUCI
                     optionWriteDebugLog.Default = "true";
                     var optionContemptFactor = uci.ChessEngineOptions["optionContemptFactor"];
                     optionContemptFactor.Default = "10";
-                    optionCommand.OptionValues.AddRange(new List<OptionData> {
-                        optionWriteDebugLog, optionContemptFactor
-                    });
+                    optionCommand.OptionValues.Add(optionWriteDebugLog);
+                    optionCommand.OptionValues.Add(optionContemptFactor);
                     uci.SendCommand(optionCommand);
                     UniversalChessInterface.WaitForResponse(optionCommand);
 
@@ -73,10 +73,70 @@ namespace TestChessterUCI
                 var uciCommand = new UciCommand();
                 uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 10); // 10 milliseconds
                 uci.SendCommand(uciCommand);
-                Thread.Sleep(50);
+                Thread.Sleep(75);
 
                 Assert.False(uciCommand.CommandResponseReceived);
                 Assert.True(uciCommand.CommandTimeoutElapsed);
+            }
+        }
+
+        [Fact]
+        public void quit_to_end_program()
+        {
+            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            {
+                uci.SetUciMode();
+                using (var quitCommand = new QuitCommand())
+                {
+                    uci.SendCommand(quitCommand);
+
+                    Assert.True(quitCommand.ErrorText == default(string));
+                }
+            }
+        }
+
+        [Fact]
+        public void allow_the_engine_to_go()
+        {
+            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            {
+                uci.SetUciMode();
+                using (var isReadyCommand = new IsReadyCommand())
+                {
+                    uci.SendCommand(isReadyCommand);
+                    UniversalChessInterface.WaitForResponse(isReadyCommand);
+
+                    Assert.True(isReadyCommand.CommandResponseReceived);
+                    using(var newGameCommand = new UciNewGame())
+                    {
+                        uci.SendCommand(newGameCommand);
+                        uci.SendCommand(isReadyCommand);
+                        UniversalChessInterface.WaitForResponse(isReadyCommand);
+
+                        using (var positionCommand = new PositionCommand())
+                        {
+                            positionCommand.IsStartPosition = true;
+                            positionCommand.FenString = "e2e4 e7e5";
+                            uci.SendCommand(positionCommand);
+
+                            using (var goCommand = new GoCommand())
+                            {
+                                goCommand.Infinite = true;
+                                uci.SendCommand(goCommand);
+                                Thread.Sleep(500); // Allow the engine time to "think"
+                                uci.SendCommand(new StopCommand());
+                                UniversalChessInterface.WaitForResponse(goCommand);
+
+                                Assert.True(!string.IsNullOrWhiteSpace(goCommand.InfoResponse.ToString()));
+                                Debug.WriteLine(goCommand.InfoResponse.ToString());
+                                Assert.True(!string.IsNullOrWhiteSpace(goCommand.BestMove));
+                                Debug.WriteLine(goCommand.BestMove);
+
+                                uci.SendCommand(new QuitCommand());
+                            }
+                        }
+                    }
+                }
             }
         }
     }

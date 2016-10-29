@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace ChessterUci.Commands
@@ -28,7 +29,7 @@ namespace ChessterUci.Commands
         /// </summary>
         public OptionCommand() : base()
         {
-            OptionValues = new List<OptionData>();
+            OptionValues = new Collection<OptionData>();
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace ChessterUci.Commands
         /// <summary>
         /// List of <see cref="OptionData"/> used when getting or setting the options.
         /// </summary>
-        public List<OptionData> OptionValues { get; set; }
+        public Collection<OptionData> OptionValues { get; }
 
         internal override void SendCommand()
         {

@@ -48,6 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChessterException.cs" />
+    <Compile Include="Commands\GoCommand.cs" />
+    <Compile Include="Commands\PonderHitCommand.cs" />
+    <Compile Include="Commands\PositionCommand.cs" />
+    <Compile Include="Commands\QuitCommand.cs" />
+    <Compile Include="Commands\RegisterCommand.cs" />
+    <Compile Include="Commands\StopCommand.cs" />
+    <Compile Include="Commands\UciNewGame.cs" />
     <Compile Include="EngineController.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Commands\ChessCommand.cs" />
