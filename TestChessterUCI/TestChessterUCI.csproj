@@ -66,7 +66,6 @@
   <ItemGroup>
     <Compile Include="BogusCommand.cs" />
     <Compile Include="ChessCommandShould.cs" />
-    <Compile Include="TestUtility.cs" />
     <Compile Include="UniversalChessInterfaceShould.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -12,6 +12,8 @@ namespace ChessterUci
     {
         private bool _disposed;
         private Process _chessEngineProcess;
+        private TraceSource _engineControllerTraceSource;
+
 
         /// <summary>
         /// Event which is published when data is received from the chess engine's standard output stream.
@@ -28,6 +30,7 @@ namespace ChessterUci
         /// <param name="chessEnginePath"></param>
         public EngineController(string chessEnginePath)
         {
+            _engineControllerTraceSource = new TraceSource("EngineControllerTraceSource");
             StartChessEngine(chessEnginePath);
         }
 
@@ -107,12 +110,15 @@ namespace ChessterUci
         /// <param name="command"></param>
         public void SendCommand(string command)
         {
+            _engineControllerTraceSource.TraceInformation($"Sending the {command} command");
             _chessEngineProcess.StandardInput.WriteLine(command);
         }
 
         public void KillEngine()
         {
-            if(_chessEngineProcess != null)
+            _engineControllerTraceSource.TraceInformation("Killing the chess engine process");
+
+            if (_chessEngineProcess != null)
             {
                 _chessEngineProcess.Kill();
             }
@@ -153,6 +159,7 @@ namespace ChessterUci
             {
                 throw new ChessterEngineException(Messages.ChessEnginePathNotSupplied);
             }
+            _engineControllerTraceSource.TraceInformation($"Starting the chess engine process, path is {chessEnginePath}");
             _chessEngineProcess = new Process();
             _chessEngineProcess.StartInfo.FileName = chessEnginePath;
             _chessEngineProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(_chessEngineProcess.StartInfo.FileName);
@@ -168,7 +175,7 @@ namespace ChessterUci
             _chessEngineProcess.BeginErrorReadLine();
             _chessEngineProcess.BeginOutputReadLine();
         }
-
+        
         #endregion
     }
 }

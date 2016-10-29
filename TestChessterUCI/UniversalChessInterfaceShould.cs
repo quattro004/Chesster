@@ -21,29 +21,21 @@ namespace TestChessterUCI
         [Fact]
         public void receive_uciok_after_setting_uci_mode()
         {
-            try
+            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
             {
-                TestUtility.PrepareUniversalChessInterface();
-                Assert.True(TestUtility.UciObject.UciModeComplete, "The engine failed to fully initialize.");
-            }
-            finally
-            {
-                TestUtility.UciObject.Dispose();
+                uci.SetUciMode();
+                Assert.True(uci.UciModeComplete, "The engine failed to fully initialize.");
             }
         }
 
         [Fact]
         public void contain_options_after_initialization()
         {
-            try
+            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
             {
-                TestUtility.PrepareUniversalChessInterface();
-                Assert.NotNull(TestUtility.UciObject.ChessEngineOptions);
-                Assert.NotEmpty(TestUtility.UciObject.ChessEngineOptions);
-            }
-            finally
-            {
-                TestUtility.UciObject.Dispose();
+                uci.SetUciMode();
+                Assert.NotNull(uci.ChessEngineOptions);
+                Assert.NotEmpty(uci.ChessEngineOptions);
             }
         }
     }
