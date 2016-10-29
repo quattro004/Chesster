@@ -13,7 +13,7 @@ namespace ChessterUci.Commands
         private IEngineController _engineController;
         private Timer _commandTimer;
         private TimeSpan _commandResponsePeriod;
-        private TimeSpan _elapsedCommandSendTime; // How long it's been since the command was sent.
+        private double _elapsedCommandSendTime; // How long it's been in milliseconds since the command was sent.
         private TimeSpan _timerInterval = new TimeSpan(0, 0, 0, 0, 10); // 10 milliseconds
         private bool disposedValue = false; // To detect redundant calls
         private bool _commandResponseReceived;
@@ -88,7 +88,7 @@ namespace ChessterUci.Commands
         /// </summary>
         public bool CommandTimeoutElapsed
         {
-            get { return _elapsedCommandSendTime >= CommandResponsePeriod; }
+            get { return _elapsedCommandSendTime >= CommandResponsePeriod.TotalMilliseconds; }
         }
 
         /// <summary>
@@ -149,15 +149,12 @@ namespace ChessterUci.Commands
         /// <param name="state"></param>
         protected virtual void CommandTimerCallback(object state)
         {
+            _elapsedCommandSendTime += TimerInterval.TotalMilliseconds;
+            Debug.WriteLine($"CommandTimerCallback() elapsed command send time in milliseconds is {_elapsedCommandSendTime}");
+
             if (CommandTimeoutElapsed || CommandResponseReceived)
             {
                 StopTimer();
-                // Clear the elapsed time for next time a command is sent.
-                _elapsedCommandSendTime = new TimeSpan(0, 0, 0, 0, 0);
-            }
-            else
-            {
-                _elapsedCommandSendTime.Add(TimerInterval);
             }
         }
 
@@ -175,12 +172,13 @@ namespace ChessterUci.Commands
         /// <summary>
         /// Sends this command to the chess engine.
         /// </summary>
-        internal void SendCommand()
+        internal virtual void SendCommand()
         {
             EnsureEngineIsRunning();
             ErrorText = default(string);
             ChessCommandTraceSource.TraceInformation($"Sending the {CommandText} command to the chess engine.");
             ChessEngineController.SendCommand(CommandText);
+            _elapsedCommandSendTime = 0;
             _commandTimer.Change(TimerInterval, TimerInterval); // Start the timer.
         }
 

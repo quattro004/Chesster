@@ -64,16 +64,6 @@ namespace ChessterUci.Commands
         public Dictionary<string, OptionData> Options { get; private set; } = new Dictionary<string, OptionData>();
 
         /// <summary>
-        /// Callback that gets invoked after sending a command.
-        /// </summary>
-        /// <param name="state"></param>
-        protected override void CommandTimerCallback(object state)
-        {
-            // The base class controls the timer so need to call this first.
-            base.CommandTimerCallback(state);
-        }
-
-        /// <summary>
         /// Performs disposal for this command.
         /// </summary>
         /// <param name="disposing"></param>

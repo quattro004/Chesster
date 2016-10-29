@@ -22,56 +22,32 @@ namespace ChessterUci.Commands
     ///</remarks>
     public class OptionCommand : ChessCommand
     {
+        private string _commandText;
         /// <summary>
         /// Initializes the command used to get and set options on the chess engine.
         /// </summary>
         public OptionCommand() : base()
         {
+            OptionValues = new List<OptionData>();
         }
 
         /// <summary>
         /// Command used to communicate with the chess engine ("setoption").
         /// </summary>
-        public override string CommandText
-        {
-            get
-            {
-                return "setoption ";
-            }
-        }
+        public override string CommandText { get { return _commandText; } }
+
         /// <summary>
         /// List of <see cref="OptionData"/> used when getting or setting the options.
         /// </summary>
-        public IEnumerable<OptionData> OptionValues { get; set; }
+        public List<OptionData> OptionValues { get; set; }
 
-        /// <summary>
-        /// Reference to the chess engine controller which manages the actual process.
-        /// </summary>
-        internal override IEngineController ChessEngineController
+        internal override void SendCommand()
         {
-            get
+            foreach (var option in OptionValues)
             {
-                return base.ChessEngineController;
+                _commandText = string.Format("setoption name {0} value {1}", option.Name, option.Default);
+                base.SendCommand();
             }
-
-            set
-            {
-                base.ChessEngineController = value;
-                if (base.ChessEngineController != null)
-                {
-                    base.ChessEngineController.DataReceived += EngineController_DataReceived;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Occurs when data is received from the engine controller after sending this command.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void EngineController_DataReceived(object sender, DataReceivedEventArgs e)
-        {
-            ChessCommandTraceSource.TraceInformation($"EngineController_DataReceived data is {e.Data}.");
         }
     }
 }
