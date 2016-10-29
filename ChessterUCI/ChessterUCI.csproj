@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChessterException.cs" />
-    <Compile Include="Commands\DebugCommand.cs" />
     <Compile Include="EngineController.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Commands\ChessCommand.cs" />
