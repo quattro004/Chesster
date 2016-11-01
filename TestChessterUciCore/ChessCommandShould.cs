@@ -1,20 +1,25 @@
-﻿using ChessterUci.Commands;
+﻿using ChessterUciCore.Commands;
 using Xunit;
-using ChessterUci;
-using System.Configuration;
-using System.Collections.Generic;
+using ChessterUciCore;
 using System;
 using System.Threading;
 using System.Diagnostics;
 
-namespace TestChessterUCI
+namespace TestChessterUciCore
 {
     public class ChessCommandShould
     {
+        private TestUtility _testUtility;
+
+        public ChessCommandShould()
+        {
+            _testUtility = new TestUtility();
+        }
+
         [Fact]
         public void receive_readyok_after_sending_isready()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            using (var uci = new UniversalChessInterface(_testUtility.Config["ChessEnginePath"]))
             {
                 uci.SetUciMode();
                 using (var isReadyCommand = new IsReadyCommand())
@@ -30,7 +35,7 @@ namespace TestChessterUCI
         [Fact]
         public void error_when_engine_doesnt_recognize_command()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            using (var uci = new UniversalChessInterface(_testUtility.Config["ChessEnginePath"]))
             {
                 uci.SetUciMode();
                 using (var bogusCommand = new BogusCommand())
@@ -46,7 +51,7 @@ namespace TestChessterUCI
         [Fact]
         public void allow_options_to_be_set()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            using (var uci = new UniversalChessInterface(_testUtility.Config["ChessEnginePath"]))
             {
                 uci.SetUciMode();
                 using(var optionCommand = new OptionCommand())
@@ -68,7 +73,7 @@ namespace TestChessterUCI
         [Fact]
         public void timeout_when_specified()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            using (var uci = new UniversalChessInterface(_testUtility.Config["ChessEnginePath"]))
             {
                 var uciCommand = new UciCommand();
                 uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 10); // 10 milliseconds
@@ -83,7 +88,7 @@ namespace TestChessterUCI
         [Fact]
         public void quit_to_end_program()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            using (var uci = new UniversalChessInterface(_testUtility.Config["ChessEnginePath"]))
             {
                 uci.SetUciMode();
                 using (var quitCommand = new QuitCommand())
@@ -98,7 +103,7 @@ namespace TestChessterUCI
         [Fact]
         public void allow_the_engine_to_go()
         {
-            using (var uci = new UniversalChessInterface(ConfigurationManager.AppSettings["ChessEnginePath"]))
+            using (var uci = new UniversalChessInterface(_testUtility.Config["ChessEnginePath"]))
             {
                 uci.SetUciMode();
                 using (var isReadyCommand = new IsReadyCommand())

@@ -70,12 +70,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ChessterUCI\ChessterUci.csproj">
-      <Project>{e21df92c-1fea-4f65-84aa-1cb7bd507c08}</Project>
-      <Name>ChessterUci</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>

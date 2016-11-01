@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessterUci", "ChessterUCI\ChessterUci.csproj", "{E21DF92C-1FEA-4F65-84AA-1CB7BD507C08}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestChessterUCI", "TestChessterUCI\TestChessterUCI.csproj", "{430B6BED-02C5-48DD-81DA-98628028DD9A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E9A20D8-AF5D-4CAD-ABBD-7B7904D6BD43}"
 	ProjectSection(SolutionItems) = preProject
 		UCI.protocol.txt = UCI.protocol.txt
 	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ChessterUciCore", "ChessterUciCore\ChessterUciCore.xproj", "{587CFBF3-99FA-41AE-8CCF-E037FCB03F1E}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "TestChessterUciCore", "TestChessterUciCore\TestChessterUciCore.xproj", "{9E638A4A-98CE-4587-B8AE-3AB101392D7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,14 +18,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E21DF92C-1FEA-4F65-84AA-1CB7BD507C08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E21DF92C-1FEA-4F65-84AA-1CB7BD507C08}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E21DF92C-1FEA-4F65-84AA-1CB7BD507C08}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E21DF92C-1FEA-4F65-84AA-1CB7BD507C08}.Release|Any CPU.Build.0 = Release|Any CPU
-		{430B6BED-02C5-48DD-81DA-98628028DD9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{430B6BED-02C5-48DD-81DA-98628028DD9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{430B6BED-02C5-48DD-81DA-98628028DD9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{430B6BED-02C5-48DD-81DA-98628028DD9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{587CFBF3-99FA-41AE-8CCF-E037FCB03F1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{587CFBF3-99FA-41AE-8CCF-E037FCB03F1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{587CFBF3-99FA-41AE-8CCF-E037FCB03F1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{587CFBF3-99FA-41AE-8CCF-E037FCB03F1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E638A4A-98CE-4587-B8AE-3AB101392D7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E638A4A-98CE-4587-B8AE-3AB101392D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E638A4A-98CE-4587-B8AE-3AB101392D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E638A4A-98CE-4587-B8AE-3AB101392D7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

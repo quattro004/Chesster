@@ -1,0 +1,2 @@
+>> setoption name Contempt Factor value 10
+>> setoption name Contempt Factor value 10
