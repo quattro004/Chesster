@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ChessterUciCore;
+using Microsoft.Extensions.Configuration;
 using System.IO;
 
 namespace TestChessterUciCore
@@ -13,8 +14,11 @@ namespace TestChessterUciCore
             configurationBuilder.SetBasePath(currentDirectory);
             configurationBuilder.AddJsonFile("config.json");
             Config = configurationBuilder.Build();
+            EngineController = new EngineController(Config["ChessEnginePath"]);
         }
 
         public IConfigurationRoot Config { get; private set; }
+
+        public IEngineController EngineController { get; private set; }
     }
 }

@@ -20,10 +20,10 @@ namespace ChessterUciCore
         /// <summary>
         /// Performs initialization for the chess interface to the engine.
         /// </summary>
-        public UniversalChessInterface(string chessEnginePath)
+        public UniversalChessInterface(IEngineController engineController)
         {
             _universalChessInterfaceTraceSource = new TraceSource("UniversalChessInterfaceTraceSource");
-            ChessEngineController = new EngineController(chessEnginePath);
+            ChessEngineController = engineController;
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace ChessterUciCore
         /// Waits for the command's response to be returned or the timeout period to expire.
         /// </summary>
         /// <param name="command"></param>
-        public static void WaitForResponse(ChessCommand command)
+        public void WaitForResponse(ChessCommand command)
         {
             if(null == command)
             {

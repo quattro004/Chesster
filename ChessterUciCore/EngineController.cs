@@ -8,7 +8,7 @@ namespace ChessterUciCore
     /// <summary>
     /// Controls the chess engine process. Any UCI compliant chess engine can be used.
     /// </summary>
-    internal class EngineController : IDisposable, IEngineController
+    public class EngineController : IDisposable, IEngineController
     {
         private bool _disposed;
         private Process _chessEngineProcess;
@@ -114,6 +114,9 @@ namespace ChessterUciCore
             _chessEngineProcess.StandardInput.WriteLine(command);
         }
 
+        /// <summary>
+        /// Shuts down the actual process hosting the chess engine.
+        /// </summary>
         public void KillEngine()
         {
             _engineControllerTraceSource.TraceInformation("Killing the chess engine process");
