@@ -1,7 +1,7 @@
 ﻿using ChessterUciCore.Commands;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,8 +12,11 @@ namespace ChessterUciCore
     /// </summary>
     public class UniversalChessInterface : IDisposable
     {
-        private TraceSource _universalChessInterfaceTraceSource;
         private bool _disposedValue = false; // To detect redundant calls
+        /// <summary>
+        /// Logger for this class.
+        /// </summary>
+        ILogger Logger { get; } = ChessterLogging.CreateLogger<UniversalChessInterface>();
 
         #region Properties
 
@@ -26,8 +29,6 @@ namespace ChessterUciCore
         /// is null.</exception>
         public UniversalChessInterface(IEngineController engineController)
         {
-            _universalChessInterfaceTraceSource = new TraceSource("UniversalChessInterfaceTraceSource");
-
             if (null == engineController)
             {
                 throw new ChessterEngineException(Messages.NullEngineController);
@@ -90,10 +91,9 @@ namespace ChessterUciCore
                 {
                     // Initialization wasn't completed by the chess engine within the specified
                     // time period so kill the process.
-                    _universalChessInterfaceTraceSource.TraceInformation("Killing the chess engine process");
+                    Logger.LogInformation("Killing the chess engine process");
                     ChessEngineController.KillEngine();
-                    _universalChessInterfaceTraceSource.TraceEvent(TraceEventType.Critical, 1,
-                        Messages.ChessEngineDidntInitialize);
+                    Logger.LogCritical(Messages.ChessEngineDidntInitialize);
                     throw new ChessterEngineException(Messages.ChessEngineDidntInitialize);
                 }
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,9 +40,9 @@ namespace ChessterUciCore.Commands
         public string ErrorText { get; private set; }
 
         /// <summary>
-        /// Used to trace information at runtime regarding chess command execution.
+        /// Logger for this class.
         /// </summary>
-        protected TraceSource ChessCommandTraceSource { get; } = new TraceSource("ChessCommandTraceSource");
+        ILogger Logger { get; } = ChessterLogging.CreateLogger<ChessCommand>();
 
         /// <summary>
         /// Time period to wait until a response to this command is received from the chess engine.
@@ -137,7 +138,7 @@ namespace ChessterUciCore.Commands
         /// <returns><see cref="bool"/> indicating a valid response.</returns>
         protected bool ResponseIsNotNullOrEmpty(string chessEngineResponse)
         {
-            ChessCommandTraceSource.TraceInformation($"Data received: {chessEngineResponse}.");
+            Logger.LogInformation($"Data received: {chessEngineResponse}.");
 
             return !string.IsNullOrWhiteSpace(chessEngineResponse);
         }
@@ -177,7 +178,7 @@ namespace ChessterUciCore.Commands
             CommandResponseReceived = false;
             EnsureEngineIsRunning();
             ErrorText = default(string);
-            ChessCommandTraceSource.TraceInformation($"Sending the {CommandText} command to the chess engine.");
+            Logger.LogInformation($"Sending the {CommandText} command to the chess engine.");
             ChessEngineController.SendCommand(CommandText);
             _elapsedCommandSendTime = 0;
             _commandTimer.Change(TimerInterval, TimerInterval); // Start the timer.
@@ -202,7 +203,7 @@ namespace ChessterUciCore.Commands
         /// <param name="e"></param>
         private void EngineController_ErrorReceived(object sender, DataReceivedEventArgs e)
         {
-            ChessCommandTraceSource.TraceEvent(TraceEventType.Error, 0, $"ErrorReceived: {e.Data}.");
+            Logger.LogError($"ErrorReceived: {e.Data}.");
 
             if (ResponseIsNotNullOrEmpty(e.Data))
             {

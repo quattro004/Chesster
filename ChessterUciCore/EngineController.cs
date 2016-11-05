@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace ChessterUciCore
 {
@@ -12,8 +12,6 @@ namespace ChessterUciCore
     {
         private bool _disposed;
         private Process _chessEngineProcess;
-        private TraceSource _engineControllerTraceSource;
-
 
         /// <summary>
         /// Event which is published when data is received from the chess engine's standard output stream.
@@ -25,12 +23,16 @@ namespace ChessterUciCore
         public event EventHandler<DataReceivedEventArgs> ErrorReceived;
 
         /// <summary>
+        /// Logger for this class.
+        /// </summary>
+        ILogger Logger { get; } =  ChessterLogging.CreateLogger<EngineController>();
+
+        /// <summary>
         /// Initializes the controller and creates the chess engine process.
         /// </summary>
         /// <param name="chessEnginePath"></param>
         public EngineController(string chessEnginePath)
         {
-            _engineControllerTraceSource = new TraceSource("EngineControllerTraceSource");
             StartChessEngine(chessEnginePath);
         }
 
@@ -110,7 +112,7 @@ namespace ChessterUciCore
         /// <param name="command"></param>
         public void SendCommand(string command)
         {
-            _engineControllerTraceSource.TraceInformation($"Sending the {command} command");
+            Logger.LogInformation($"Sending the {command} command");
             _chessEngineProcess.StandardInput.WriteLine(command);
         }
 
@@ -119,7 +121,7 @@ namespace ChessterUciCore
         /// </summary>
         public void KillEngine()
         {
-            _engineControllerTraceSource.TraceInformation("Killing the chess engine process");
+            Logger.LogInformation("Killing the chess engine process");
 
             if (_chessEngineProcess != null)
             {
@@ -162,7 +164,7 @@ namespace ChessterUciCore
             {
                 throw new ChessterEngineException(Messages.ChessEnginePathNotSupplied);
             }
-            _engineControllerTraceSource.TraceInformation($"Starting the chess engine process, path is {chessEnginePath}");
+            Logger.LogInformation($"Starting the chess engine process, path is {chessEnginePath}");
             _chessEngineProcess = new Process();
             _chessEngineProcess.StartInfo.FileName = chessEnginePath;
             _chessEngineProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(_chessEngineProcess.StartInfo.FileName);
