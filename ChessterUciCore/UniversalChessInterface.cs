@@ -19,11 +19,21 @@ namespace ChessterUciCore
 
         /// <summary>
         /// Performs initialization for the chess interface to the engine.
+        /// <param name="engineController"><see cref="IEngineController"/> which controls the chess
+        /// engine process.</param>
         /// </summary>
+        /// <exception cref="ChessterEngineException">Thrown if the <paramref name="engineController"/>
+        /// is null.</exception>
         public UniversalChessInterface(IEngineController engineController)
         {
             _universalChessInterfaceTraceSource = new TraceSource("UniversalChessInterfaceTraceSource");
+
+            if (null == engineController)
+            {
+                throw new ChessterEngineException(Messages.NullEngineController);
+            }
             ChessEngineController = engineController;
+            CommandFactory = new ChessCommandFactory(ChessEngineController);
         }
 
         /// <summary>
@@ -52,6 +62,11 @@ namespace ChessterUciCore
         /// </summary>
         public IEngineController ChessEngineController { get; private set; }
 
+        /// <summary>
+        /// Factory for creating chess commands.
+        /// </summary>
+        public ChessCommandFactory CommandFactory { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -62,7 +77,7 @@ namespace ChessterUciCore
         /// <remarks><see cref="UciCommand"/> for more information.</remarks>
         public void SetUciMode()
         {
-            using (var uciCommand = new UciCommand())
+            using (var uciCommand = CommandFactory.CreateCommand<UciCommand>())
             {
                 SendCommand(uciCommand);
                 WaitForResponse(uciCommand);
@@ -111,7 +126,6 @@ namespace ChessterUciCore
             {
                 throw new ChessterEngineException(Messages.NullCommand);
             }
-            command.ChessEngineController = ChessEngineController;
             command.SendCommand();
         }
 

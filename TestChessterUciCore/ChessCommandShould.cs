@@ -22,7 +22,7 @@ namespace TestChessterUciCore
             using (var uci = new UniversalChessInterface(_testUtility.EngineController))
             {
                 uci.SetUciMode();
-                using (var isReadyCommand = new IsReadyCommand())
+                using (var isReadyCommand = uci.CommandFactory.CreateCommand<IsReadyCommand>())
                 {
                     uci.SendCommand(isReadyCommand);
                     uci.WaitForResponse(isReadyCommand);
@@ -38,7 +38,7 @@ namespace TestChessterUciCore
             using (var uci = new UniversalChessInterface(_testUtility.EngineController))
             {
                 uci.SetUciMode();
-                using (var bogusCommand = new BogusCommand())
+                using (var bogusCommand = uci.CommandFactory.CreateCommand<BogusCommand>())
                 {
                     uci.SendCommand(bogusCommand);
                     uci.WaitForResponse(bogusCommand);
@@ -54,7 +54,7 @@ namespace TestChessterUciCore
             using (var uci = new UniversalChessInterface(_testUtility.EngineController))
             {
                 uci.SetUciMode();
-                using(var optionCommand = new OptionCommand())
+                using(var optionCommand = uci.CommandFactory.CreateCommand<OptionCommand>())
                 {
                     var optionWriteDebugLog = uci.ChessEngineOptions["optionWriteDebugLog"];
                     optionWriteDebugLog.Default = "true";
@@ -75,13 +75,15 @@ namespace TestChessterUciCore
         {
             using (var uci = new UniversalChessInterface(_testUtility.EngineController))
             {
-                var uciCommand = new UciCommand();
-                uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 10); // 10 milliseconds
-                uci.SendCommand(uciCommand);
-                Thread.Sleep(100);
+                using (var uciCommand = uci.CommandFactory.CreateCommand<UciCommand>())
+                {
+                    uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 10); // 10 milliseconds
+                    uci.SendCommand(uciCommand);
+                    Thread.Sleep(100);
 
-                Assert.False(uciCommand.CommandResponseReceived);
-                Assert.True(uciCommand.CommandTimeoutElapsed);
+                    Assert.False(uciCommand.CommandResponseReceived);
+                    Assert.True(uciCommand.CommandTimeoutElapsed);
+                }
             }
         }
 
@@ -91,7 +93,7 @@ namespace TestChessterUciCore
             using (var uci = new UniversalChessInterface(_testUtility.EngineController))
             {
                 uci.SetUciMode();
-                using (var quitCommand = new QuitCommand())
+                using (var quitCommand = uci.CommandFactory.CreateCommand<QuitCommand>())
                 {
                     uci.SendCommand(quitCommand);
 
@@ -106,30 +108,30 @@ namespace TestChessterUciCore
             using (var uci = new UniversalChessInterface(_testUtility.EngineController))
             {
                 uci.SetUciMode();
-                using (var isReadyCommand = new IsReadyCommand())
+                using (var isReadyCommand = uci.CommandFactory.CreateCommand<IsReadyCommand>())
                 {
                     uci.SendCommand(isReadyCommand);
                     uci.WaitForResponse(isReadyCommand);
 
                     Assert.True(isReadyCommand.CommandResponseReceived);
-                    using(var newGameCommand = new UciNewGame())
+                    using(var newGameCommand = uci.CommandFactory.CreateCommand<UciNewGame>())
                     {
                         uci.SendCommand(newGameCommand);
                         uci.SendCommand(isReadyCommand);
                         uci.WaitForResponse(isReadyCommand);
 
-                        using (var positionCommand = new PositionCommand())
+                        using (var positionCommand = uci.CommandFactory.CreateCommand<PositionCommand>())
                         {
                             positionCommand.IsStartPosition = true;
                             positionCommand.FenString = "e2e4 e7e5";
                             uci.SendCommand(positionCommand);
 
-                            using (var goCommand = new GoCommand())
+                            using (var goCommand = uci.CommandFactory.CreateCommand<GoCommand>())
                             {
                                 goCommand.Infinite = true;
                                 uci.SendCommand(goCommand);
                                 Thread.Sleep(500); // Allow the engine time to "think"
-                                uci.SendCommand(new StopCommand());
+                                uci.SendCommand(uci.CommandFactory.CreateCommand<StopCommand>());
                                 uci.WaitForResponse(goCommand);
 
                                 Assert.True(!string.IsNullOrWhiteSpace(goCommand.InfoResponse.ToString()));
@@ -137,7 +139,7 @@ namespace TestChessterUciCore
                                 Assert.True(!string.IsNullOrWhiteSpace(goCommand.BestMove));
                                 Debug.WriteLine(goCommand.BestMove);
 
-                                uci.SendCommand(new QuitCommand());
+                                uci.SendCommand(uci.CommandFactory.CreateCommand<QuitCommand>());
                             }
                         }
                     }
