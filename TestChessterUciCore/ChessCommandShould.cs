@@ -74,13 +74,14 @@ namespace TestChessterUciCore
         [Fact]
         public void timeout_when_specified()
         {
+            Debug.WriteLine("timeout_when_specified()");
             using (var uci = new UniversalChessInterface(_testUtility.EngineController))
             {
                 using (var uciCommand = uci.CommandFactory.CreateCommand<UciCommand>())
                 {
-                    uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 10); // 10 milliseconds
+                    uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 25); // 25 milliseconds
                     uci.SendCommand(uciCommand);
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
 
                     Assert.False(uciCommand.CommandResponseReceived);
                     Assert.True(uciCommand.CommandTimeoutElapsed);
@@ -236,6 +237,21 @@ namespace TestChessterUciCore
                 {
                     uci.SendCommand(uciCommand);
                     Assert.Equal("copyprotection checking", uciCommand.CopyProtectionInfo);
+                }
+            }
+        }
+
+        [Fact]
+        public void throw_when_command_response_period_invalid()
+        {
+            using (var uci = new UniversalChessInterface(new FakeEngineController()))
+            {
+                using (var registerCommand = uci.CommandFactory.CreateCommand<RegisterCommand>())
+                {
+                    Assert.Throws<ChessterEngineException>(() =>
+                    {
+                        registerCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 0);
+                    });
                 }
             }
         }

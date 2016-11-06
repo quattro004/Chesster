@@ -13,18 +13,17 @@ namespace ChessterUciCore.Commands
         private IEngineController _engineController;
         private Timer _commandTimer;
         private TimeSpan _commandResponsePeriod;
-        private double _elapsedCommandSendTime; // How long it's been in milliseconds since the command was sent.
-        private TimeSpan _timerInterval = new TimeSpan(0, 0, 0, 0, 10); // 10 milliseconds
+        private TimeSpan _timerInterval = new TimeSpan(0, 0, 0, 0, 50); // 50 milliseconds
         private bool disposedValue = false; // To detect redundant calls
         private bool _commandResponseReceived;
+        private DateTime _commandStartTime;
 
         /// <summary>
         /// Initializes the command for use with the engine controller.
         /// </summary>
         protected ChessCommand()
         {
-            _commandTimer = new Timer(CommandTimerCallback, null, Timeout.Infinite, Timeout.Infinite); // Don't start timer yet
-            _commandResponsePeriod = new TimeSpan(0, 0, 1); // 1 second default.
+            _commandResponsePeriod = new TimeSpan(0, 0, 5); // 5 second default.
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace ChessterUciCore.Commands
 
         /// <summary>
         /// Time period to wait until a response to this command is received from the chess engine.
-        /// Default is 1 second.
+        /// Default is 5 seconds.
         /// </summary>
         public TimeSpan CommandResponsePeriod
         {
@@ -88,12 +87,16 @@ namespace ChessterUciCore.Commands
         /// </summary>
         public bool CommandTimeoutElapsed
         {
-            get { return _elapsedCommandSendTime >= CommandResponsePeriod.TotalMilliseconds; }
+            get
+            {
+                var elapsedCommandSendTime = DateTime.Now.Subtract(_commandStartTime);
+                return elapsedCommandSendTime >= CommandResponsePeriod;
+            }
         }
 
         /// <summary>
         /// Amount of time to wait between timer callbacks after sending a command
-        /// to check for a response from the chess engine. The default is 10 milliseconds.
+        /// to check for a response from the chess engine. The default is 50 milliseconds.
         /// </summary>
         public TimeSpan TimerInterval
         {
@@ -106,6 +109,7 @@ namespace ChessterUciCore.Commands
                 _timerInterval = value;
                 if(_commandTimer != null)
                 {
+                    Logger.LogInformation($"Changing the timer interval to {_timerInterval.Milliseconds} milliseconds.");
                     _commandTimer.Change(_timerInterval, _timerInterval);
                 }
             }
@@ -149,8 +153,7 @@ namespace ChessterUciCore.Commands
         /// <param name="state"></param>
         protected virtual void CommandTimerCallback(object state)
         {
-            _elapsedCommandSendTime += TimerInterval.TotalMilliseconds;
-            Debug.WriteLine($"CommandTimerCallback() elapsed command send time in milliseconds is {_elapsedCommandSendTime}");
+            Logger.LogInformation("CommandTimerCallback()");
 
             if (CommandTimeoutElapsed || CommandResponseReceived)
             {
@@ -165,7 +168,12 @@ namespace ChessterUciCore.Commands
         {
             if (_commandTimer != null)
             {
-                _commandTimer.Change(Timeout.Infinite, Timeout.Infinite); // Stop the timer.
+                Logger.LogInformation("Stopping the command timer.");
+                if(!_commandTimer.Change(Timeout.Infinite, Timeout.Infinite)) // Stop the timer.
+                {
+                    Logger.LogWarning("Unable to stop the timer using the change method.");
+                }
+                _commandTimer = null;
             }
         }
 
@@ -179,8 +187,8 @@ namespace ChessterUciCore.Commands
             ErrorText = default(string);
             Logger.LogInformation($"Sending the {CommandText} command to the chess engine.");
             ChessEngineController.SendCommand(CommandText);
-            _elapsedCommandSendTime = 0;
-            _commandTimer.Change(TimerInterval, TimerInterval); // Start the timer.
+            _commandStartTime = DateTime.Now;
+            _commandTimer = new Timer(CommandTimerCallback, null, TimerInterval, TimerInterval);
         }
 
         /// <summary>
@@ -250,7 +258,10 @@ namespace ChessterUciCore.Commands
                 {
                     // TODO: dispose managed state (managed objects).
                     StopTimer(); // In case it's running.
-                    _commandTimer.Dispose();
+                    if (_commandTimer != null)
+                    {
+                        _commandTimer.Dispose();
+                    }
                     ChessEngineController.ErrorReceived -= EngineController_ErrorReceived;
                     ChessEngineController = null;
                 }
