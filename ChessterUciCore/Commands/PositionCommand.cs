@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessterUciCore.Commands
+﻿namespace ChessterUciCore.Commands
 {
     /// <summary>
     /// Set up the position described in fenstring on the internal board and play the moves on 

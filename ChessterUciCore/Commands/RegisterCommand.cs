@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessterUciCore.Commands
+﻿namespace ChessterUciCore.Commands
 {
     /// <summary>
     /// This is the command to try to register an engine or to tell the engine that registration
@@ -22,12 +16,14 @@ namespace ChessterUciCore.Commands
         private string _commandText;
 
         /// <summary>
-        /// Performs initialization.
+        /// Performs registration or defers it to later.
         /// </summary>
         /// <param name="later">If true register later.</param>
         /// <param name="name">Name of the user.</param>
         /// <param name="code">Code to send for registration.</param>
-        public RegisterCommand(bool later, string name, string code)
+        /// <exception cref="ChessterEngineException">Thrown when <paramref name="later"/> is false
+        /// and <paramref name="name"/> or <paramref name="code"/> are null.</exception>
+        public void SetRegistration(bool later, string name = null, string code = null)
         {
             if (later)
             {
@@ -35,6 +31,10 @@ namespace ChessterUciCore.Commands
             }
             else
             {
+                if(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(code))
+                {
+                    throw new ChessterEngineException(Messages.NameAndCodeRequiredForRegistration);
+                }
                 _commandText = string.Format("register name {0} code {1}",  name, code);
             }
         }
@@ -47,6 +47,66 @@ namespace ChessterUciCore.Commands
             get
             {
                 return _commandText;
+            }
+        }
+
+        /// <summary>
+        /// Current status of the registration.
+        /// </summary>
+        public RegistrationStatus Status { get; private set; }
+
+        /// <summary>
+        /// Performs disposal for this command.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (ChessEngineController != null)
+                {
+                    ChessEngineController.DataReceived -= ChessEngineController_DataReceived;
+                }
+            }
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Reference to the chess engine controller which manages the actual process.
+        /// </summary>
+        internal override IEngineController ChessEngineController
+        {
+            get
+            {
+                return base.ChessEngineController;
+            }
+
+            set
+            {
+                base.ChessEngineController = value;
+                if (base.ChessEngineController != null)
+                {
+                    base.ChessEngineController.DataReceived += ChessEngineController_DataReceived;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Occurs when data is received from the engine controller after sending this command.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChessEngineController_DataReceived(object sender, ChessCommandReceivedEventArgs e)
+        {
+            var data = e.Data;
+
+            if (ResponseIsNotNullOrEmpty(data))
+            {
+                Status = GetRegistrationStatus(data);
+                if (Status == RegistrationStatus.Error || Status == RegistrationStatus.Ok)
+                {
+                    CommandResponseReceived = true;
+                }
             }
         }
     }

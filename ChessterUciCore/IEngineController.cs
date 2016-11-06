@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ChessterUciCore.Commands;
+using System;
 
 namespace ChessterUciCore
 {
@@ -15,11 +11,11 @@ namespace ChessterUciCore
         /// <summary>
         /// Event which is published when data is received from the chess engine's standard output stream.
         /// </summary>
-        event EventHandler<DataReceivedEventArgs> DataReceived;
+        event EventHandler<ChessCommandReceivedEventArgs> DataReceived;
         /// <summary>
         /// Event which is published when data is received from the chess engine's standard error stream.
         /// </summary>
-        event EventHandler<DataReceivedEventArgs> ErrorReceived;
+        event EventHandler<ChessCommandReceivedEventArgs> ErrorReceived;
         /// <summary>
         /// Determines whether the chess engine process is running.
         /// </summary>

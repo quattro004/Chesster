@@ -96,6 +96,15 @@ namespace ChessterUciCore {
         }
         
         /// <summary>
+        ///    Looks up a localized string similar to When registering with the chess engine a name and code are required..
+        /// </summary>
+        public static string NameAndCodeRequiredForRegistration {
+            get {
+                return ResourceManager.GetString("NameAndCodeRequiredForRegistration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Looks up a localized string similar to The command cannot be null..
         /// </summary>
         public static string NullCommand {

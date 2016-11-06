@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessterUciCore.Commands
+﻿namespace ChessterUciCore.Commands
 {
     /// <summary>
     /// Tell the engine to stop calculating as soon as possible, don't forget the 

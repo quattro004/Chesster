@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace ChessterUciCore.Commands
 {
@@ -238,7 +233,7 @@ namespace ChessterUciCore.Commands
             }
         }
 
-        private void ChessEngineController_DataReceived(object sender, DataReceivedEventArgs e)
+        private void ChessEngineController_DataReceived(object sender, ChessCommandReceivedEventArgs e)
         {
             var data = e.Data;
             if (ResponseIsNotNullOrEmpty(data))

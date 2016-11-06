@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ChessterUciCore.Commands;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,11 +17,11 @@ namespace ChessterUciCore
         /// <summary>
         /// Event which is published when data is received from the chess engine's standard output stream.
         /// </summary>
-        public event EventHandler<DataReceivedEventArgs> DataReceived;
+        public event EventHandler<ChessCommandReceivedEventArgs> DataReceived;
         /// <summary>
         /// Event which is published when data is received from the chess engine's standard error stream.
         /// </summary>
-        public event EventHandler<DataReceivedEventArgs> ErrorReceived;
+        public event EventHandler<ChessCommandReceivedEventArgs> ErrorReceived;
 
         /// <summary>
         /// Logger for this class.
@@ -89,7 +90,7 @@ namespace ChessterUciCore
         /// </summary>
         /// <param name="sender">Object that raised the event.</param>
         /// <param name="e">Event arguments received from the chess engine.</param>
-        protected virtual void OnRaiseDataReceived(object sender, DataReceivedEventArgs e)
+        protected virtual void OnRaiseDataReceived(object sender, ChessCommandReceivedEventArgs e)
         {
             DataReceived?.Invoke(sender, e);
         }
@@ -99,7 +100,7 @@ namespace ChessterUciCore
         /// </summary>
         /// <param name="sender">Object that raised the event.</param>
         /// <param name="e">Event arguments received from the chess engine.</param>
-        protected virtual void OnRaiseErrorReceived(object sender, DataReceivedEventArgs e)
+        protected virtual void OnRaiseErrorReceived(object sender, ChessCommandReceivedEventArgs e)
         {
             ErrorReceived?.Invoke(sender, e);
         }
@@ -135,7 +136,7 @@ namespace ChessterUciCore
         {
             if (!string.IsNullOrWhiteSpace(e.Data))
             {
-                OnRaiseErrorReceived(sender, e);
+                OnRaiseErrorReceived(sender, new ChessCommandReceivedEventArgs(e.Data));
             }
         }
 
@@ -143,13 +144,15 @@ namespace ChessterUciCore
         {
             if (!string.IsNullOrWhiteSpace(e.Data))
             {
+                var chessCommandArgs = new ChessCommandReceivedEventArgs(e.Data);
+
                 if (e.Data.StartsWith("Unknown command"))
                 {
-                    OnRaiseErrorReceived(sender, e);
+                    OnRaiseErrorReceived(sender, chessCommandArgs);
                 }
                 else
                 {
-                    OnRaiseDataReceived(sender, e);
+                    OnRaiseDataReceived(sender, chessCommandArgs);
                 }
             }
         }

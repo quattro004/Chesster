@@ -4,6 +4,7 @@ using ChessterUciCore;
 using System;
 using System.Threading;
 using System.Diagnostics;
+using TestChessterUciCore.Fakes;
 
 namespace TestChessterUciCore
 {
@@ -143,6 +144,98 @@ namespace TestChessterUciCore
                             }
                         }
                     }
+                }
+            }
+        }
+
+        [Fact]
+        public void support_registration()
+        {
+            using (var uci = new UniversalChessInterface(new FakeEngineController()))
+            {
+                uci.SetUciMode();
+                using (var registerCommand = uci.CommandFactory.CreateCommand<RegisterCommand>())
+                {
+                    registerCommand.SetRegistration(false, "Reese", "23098HHHJ");
+                    uci.SendCommand(registerCommand);
+                    uci.WaitForResponse(registerCommand);
+
+                    if (!string.IsNullOrWhiteSpace(registerCommand.ErrorText))
+                    {
+                        Assert.False(registerCommand.ErrorText.StartsWith("Unknown command"));
+                    }
+                    Assert.True(registerCommand.CommandText == "register name Reese code 23098HHHJ");
+                    Assert.True(registerCommand.CommandResponseReceived);
+                    Assert.True(registerCommand.Status == RegistrationStatus.Ok);
+                }
+            }
+        }
+
+        [Fact]
+        public void allow_registration_later()
+        {
+            using (var uci = new UniversalChessInterface(new FakeEngineController()))
+            {
+                uci.SetUciMode();
+                using (var registerCommand = uci.CommandFactory.CreateCommand<RegisterCommand>())
+                {
+                    registerCommand.SetRegistration(true);
+                    uci.SendCommand(registerCommand);
+                    uci.WaitForResponse(registerCommand);
+
+                    if (!string.IsNullOrWhiteSpace(registerCommand.ErrorText))
+                    {
+                        Assert.False(registerCommand.ErrorText.StartsWith("Unknown command"));
+                    }
+                    Assert.True(registerCommand.CommandResponseReceived);
+                }
+            }
+        }
+
+        [Fact]
+        public void throw_when_registration_code_invalid()
+        {
+            using (var uci = new UniversalChessInterface(new FakeEngineController()))
+            {
+                uci.SetUciMode();
+                using (var registerCommand = uci.CommandFactory.CreateCommand<RegisterCommand>())
+                {
+                    Assert.Throws<ChessterEngineException>(() =>
+                    {
+                        registerCommand.SetRegistration(false, "Reese");
+                    });
+                }
+            }
+        }
+
+        [Fact]
+        public void throw_when_registration_name_invalid()
+        {
+            using (var uci = new UniversalChessInterface(new FakeEngineController()))
+            {
+                uci.SetUciMode();
+                using (var registerCommand = uci.CommandFactory.CreateCommand<RegisterCommand>())
+                {
+                    Assert.Throws<ChessterEngineException>(() =>
+                    {
+                        registerCommand.SetRegistration(false, string.Empty, "8987JJ");
+                    });
+                }
+            }
+        }
+
+        [Fact]
+        public void support_copy_protected_engines()
+        {
+            var engineController = new FakeEngineController();
+            engineController.IsCopyProtected = true;
+
+            using (var uci = new UniversalChessInterface(engineController))
+            {
+                using(var uciCommand = uci.CommandFactory.CreateCommand<UciCommand>())
+                {
+                    uci.SendCommand(uciCommand);
+                    Assert.Equal("copyprotection checking", uciCommand.CopyProtectionInfo);
                 }
             }
         }

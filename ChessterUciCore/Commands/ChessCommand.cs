@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ChessterUciCore.Commands
 {
@@ -201,7 +200,7 @@ namespace ChessterUciCore.Commands
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void EngineController_ErrorReceived(object sender, DataReceivedEventArgs e)
+        private void EngineController_ErrorReceived(object sender, ChessCommandReceivedEventArgs e)
         {
             Logger.LogError($"ErrorReceived: {e.Data}.");
 
@@ -210,6 +209,31 @@ namespace ChessterUciCore.Commands
                 CommandResponseReceived = true;
                 ErrorText = e.Data;
             }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="RegistrationStatus"/> given data from the chess engine.
+        /// </summary>
+        /// <param name="data">Registration message from the chess engine.</param>
+        /// <returns><see cref="RegistrationStatus"/> indicating the current registration status.</returns>
+        internal RegistrationStatus GetRegistrationStatus(string data)
+        {
+            RegistrationStatus status = RegistrationStatus.NotInitiated;
+
+            if (data == "registration checking")
+            {
+                status = RegistrationStatus.Checking;
+            }
+            else if (data == "registration ok")
+            {
+                status = RegistrationStatus.Ok;
+            }
+            else if (data == "registration error")
+            {
+                status = RegistrationStatus.Error;
+            }
+
+            return status;
         }
 
         #region IDisposable Support

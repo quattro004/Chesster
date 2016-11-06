@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessterUciCore.Commands
+﻿namespace ChessterUciCore.Commands
 {
     /// <summary>
     /// This is sent to the engine when the next search (started with "position" and "go") will be from

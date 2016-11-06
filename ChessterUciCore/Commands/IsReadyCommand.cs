@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessterUciCore.Commands
+﻿namespace ChessterUciCore.Commands
 {
     /// <summary>
     /// This is used to synchronize the engine with the GUI. When the GUI has sent a command or
@@ -74,7 +67,7 @@ namespace ChessterUciCore.Commands
             base.Dispose(disposing);
         }
 
-        private void EngineController_DataReceived(object sender, DataReceivedEventArgs e)
+        private void EngineController_DataReceived(object sender, ChessCommandReceivedEventArgs e)
         {
             if (ResponseIsNotNullOrEmpty(e.Data))
             {
