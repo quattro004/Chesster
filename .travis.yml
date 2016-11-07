@@ -1,3 +1,5 @@
+dist: trusty
+sudo: required
 language: csharp
 mono: none
 dotnet: 1.0.0-preview2-003121
@@ -8,5 +10,3 @@ install:
 script:
   - xbuild /p:Configuration=Release Chesster.sln
   - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./TestChessterUciCore/bin/Release/TestChessterUciCore.dll
- dist: trusty
- sudo: required
