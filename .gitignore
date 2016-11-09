@@ -155,3 +155,4 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 /.vs/config/applicationhost.config
+/TestChessterUciCore/stockfish-5-win/true

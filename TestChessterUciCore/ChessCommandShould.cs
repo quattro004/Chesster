@@ -57,9 +57,9 @@ namespace TestChessterUciCore
                 uci.SetUciMode();
                 using(var optionCommand = uci.CommandFactory.CreateCommand<OptionCommand>())
                 {
-                    var optionWriteDebugLog = uci.ChessEngineOptions["optionWriteDebugLog"];
+                    var optionWriteDebugLog = uci.ChessEngineOptions["optionDebugLogFile"];
                     optionWriteDebugLog.Default = "true";
-                    var optionContemptFactor = uci.ChessEngineOptions["optionContemptFactor"];
+                    var optionContemptFactor = uci.ChessEngineOptions["optionContempt"];
                     optionContemptFactor.Default = "10";
                     optionCommand.OptionValues.Add(optionWriteDebugLog);
                     optionCommand.OptionValues.Add(optionContemptFactor);
