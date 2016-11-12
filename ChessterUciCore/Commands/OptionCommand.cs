@@ -3,7 +3,8 @@
 namespace ChessterUciCore.Commands
 {
     /// <summary>
-    /// Used to get and set options on the chess engine.
+    /// Used to get and set options on the chess engine. After setting options the GUI should send an 
+    /// <see cref="IsReadyCommand"/> to wait for the engine to finish intializing.
     /// </summary>
     /// <remarks>
     /// Setoption name [value ] this is sent to the engine when the user wants to change 

@@ -64,7 +64,13 @@ namespace TestChessterUciCore
                     optionCommand.OptionValues.Add(optionWriteDebugLog);
                     optionCommand.OptionValues.Add(optionContemptFactor);
                     uci.SendCommand(optionCommand);
-                    uci.WaitForResponse(optionCommand);
+                    using(var isReady = uci.CommandFactory.CreateCommand<IsReadyCommand>())
+                    {
+                        uci.SendCommand(isReady);
+                        uci.WaitForResponse(isReady);
+
+                        Assert.True(isReady.CommandResponseReceived);
+                    }
 
                     Assert.True(optionCommand.ErrorText == default(string));
                 }

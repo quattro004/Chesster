@@ -23,7 +23,7 @@ namespace ChessterUciCore.Commands
         /// </summary>
         protected ChessCommand()
         {
-            _commandResponsePeriod = new TimeSpan(0, 0, 5); // 5 second default.
+            _commandResponsePeriod = new TimeSpan(0, 0, 10); // 10 second default.
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace ChessterUciCore.Commands
 
         /// <summary>
         /// Time period to wait until a response to this command is received from the chess engine.
-        /// Default is 5 seconds.
+        /// Default is 10 seconds.
         /// </summary>
         public TimeSpan CommandResponsePeriod
         {
