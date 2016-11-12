@@ -1,5 +1,7 @@
 ﻿using ChessterUciCore;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace TestChessterUciCore
@@ -14,7 +16,15 @@ namespace TestChessterUciCore
             configurationBuilder.SetBasePath(currentDirectory);
             configurationBuilder.AddJsonFile("config.json");
             Config = configurationBuilder.Build();
-            EngineController = new EngineController(Config["ChessEnginePath"]);
+            var opSys = Environment.GetEnvironmentVariable("OS");
+            if (!string.IsNullOrWhiteSpace(opSys) && opSys.ToLower().Contains("windows"))
+            {
+               EngineController = new EngineController(Config["ChessEnginePathWindows"]);
+            }
+            else
+            {
+                EngineController = new EngineController(Config["ChessEnginePathLinux"]);
+            }
         }
 
         public IConfigurationRoot Config { get; private set; }
