@@ -3,7 +3,11 @@ sudo: required
 language: csharp
 mono: none
 dotnet: 1.0.0-preview2-003121
+<<<<<<< HEAD
 solution: Chesster.sln
 script:
   - dotnet restore
   - dotnet test TestChessterUciCore
+=======
+solution: Chesster.sln
+>>>>>>> 6f76794a6bee517b38525cf148e1583570ed32b9
