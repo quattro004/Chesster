@@ -1,4 +1,4 @@
-dist: xenial
+dist: trusty
 sudo: required
 language: csharp
 mono: none
@@ -6,4 +6,6 @@ dotnet: 1.0.0-preview2-003131
 solution: Chesster.sln
 script:
   - dotnet restore
-  - dotnet test TestChessterUciCore -c Release
+  - dotnet build ChessterUciCore -c Release
+  - dotnet build TestChessterUciCore -c Release
+  - dotnet test TestChessterUciCore -c Release --no-build
