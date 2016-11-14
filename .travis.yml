@@ -7,4 +7,3 @@ solution: Chesster.sln
 script:
   - dotnet restore
   - dotnet test TestChessterUciCore -c Release
-  - echo $?
