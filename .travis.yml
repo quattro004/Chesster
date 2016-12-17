@@ -7,6 +7,5 @@ solution: Chesster.sln
 script:
   - ps aux
   - dotnet restore
-  - dotnet build TestChessterUciCore -c Release
-  - dotnet build ChessterUciCore -c Release
+  - dotnet test TestChessterUciCore -c Release
   - ps aux
