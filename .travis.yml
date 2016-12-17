@@ -5,6 +5,8 @@ mono: none
 dotnet: 1.0.0-preview2-003131
 solution: Chesster.sln
 script:
+  - ps aux
   - dotnet restore
   - dotnet build TestChessterUciCore -c Release
   - dotnet build ChessterUciCore -c Release
+  - ps aux
