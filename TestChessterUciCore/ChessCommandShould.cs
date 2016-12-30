@@ -8,27 +8,25 @@ using TestChessterUciCore.Fakes;
 
 namespace TestChessterUciCore
 {
-    public class ChessCommandShould
+    public class ChessCommandShould 
     {
-        private TestUtility _testUtility;
-
-        public ChessCommandShould()
-        {
-            _testUtility = new TestUtility();
-        }
-
         [Fact]
         public void receive_readyok_after_sending_isready()
         {
-            using (var uci = new UniversalChessInterface(_testUtility.EngineController))
-            {
-                uci.SetUciMode();
-                using (var isReadyCommand = uci.CommandFactory.CreateCommand<IsReadyCommand>())
-                {
-                    uci.SendCommand(isReadyCommand);
-                    uci.WaitForResponse(isReadyCommand);
+            Console.WriteLine("\tChessCommandShould.receive_readyok_after_sending_isready");
 
-                    Assert.True(isReadyCommand.CommandResponseReceived);
+            using(var testUtility = new TestUtility())
+            {
+                using (var uci = new UniversalChessInterface(testUtility.EngineController))
+                {
+                    uci.SetUciMode();
+                    using (var isReadyCommand = uci.CommandFactory.CreateCommand<IsReadyCommand>())
+                    {
+                        uci.SendCommand(isReadyCommand);
+                        uci.WaitForResponse(isReadyCommand);
+
+                        Assert.True(isReadyCommand.CommandResponseReceived);
+                    }
                 }
             }
         }
@@ -36,15 +34,20 @@ namespace TestChessterUciCore
         [Fact]
         public void error_when_engine_doesnt_recognize_command()
         {
-            using (var uci = new UniversalChessInterface(_testUtility.EngineController))
+            Console.WriteLine("\tChessCommandShould.error_when_engine_doesnt_recognize_command");
+            
+            using(var testUtility = new TestUtility())
             {
-                uci.SetUciMode();
-                using (var bogusCommand = uci.CommandFactory.CreateCommand<BogusCommand>())
+                using (var uci = new UniversalChessInterface(testUtility.EngineController))
                 {
-                    uci.SendCommand(bogusCommand);
-                    uci.WaitForResponse(bogusCommand);
+                    uci.SetUciMode();
+                    using (var bogusCommand = uci.CommandFactory.CreateCommand<BogusCommand>())
+                    {
+                        uci.SendCommand(bogusCommand);
+                        uci.WaitForResponse(bogusCommand);
 
-                    Assert.True(bogusCommand.ErrorText.StartsWith("Unknown command"));
+                        Assert.True(bogusCommand.ErrorText.StartsWith("Unknown command"));
+                    }
                 }
             }
         }
@@ -52,27 +55,32 @@ namespace TestChessterUciCore
         [Fact]
         public void allow_options_to_be_set()
         {
-            using (var uci = new UniversalChessInterface(_testUtility.EngineController))
+            Console.WriteLine("\tChessCommandShould.allow_options_to_be_set");
+
+            using(var testUtility = new TestUtility())
             {
-                uci.SetUciMode();
-                using(var optionCommand = uci.CommandFactory.CreateCommand<OptionCommand>())
+                using (var uci = new UniversalChessInterface(testUtility.EngineController))
                 {
-                    var optionWriteDebugLog = uci.ChessEngineOptions["optionDebugLogFile"];
-                    optionWriteDebugLog.Default = "true";
-                    var optionContemptFactor = uci.ChessEngineOptions["optionContempt"];
-                    optionContemptFactor.Default = "10";
-                    optionCommand.OptionValues.Add(optionWriteDebugLog);
-                    optionCommand.OptionValues.Add(optionContemptFactor);
-                    uci.SendCommand(optionCommand);
-                    using(var isReady = uci.CommandFactory.CreateCommand<IsReadyCommand>())
+                    uci.SetUciMode();
+                    using(var optionCommand = uci.CommandFactory.CreateCommand<OptionCommand>())
                     {
-                        uci.SendCommand(isReady);
-                        uci.WaitForResponse(isReady);
+                        var optionWriteDebugLog = uci.ChessEngineOptions["optionDebugLogFile"];
+                        optionWriteDebugLog.Default = "true";
+                        var optionContemptFactor = uci.ChessEngineOptions["optionContempt"];
+                        optionContemptFactor.Default = "10";
+                        optionCommand.OptionValues.Add(optionWriteDebugLog);
+                        optionCommand.OptionValues.Add(optionContemptFactor);
+                        uci.SendCommand(optionCommand);
+                        using(var isReady = uci.CommandFactory.CreateCommand<IsReadyCommand>())
+                        {
+                            uci.SendCommand(isReady);
+                            uci.WaitForResponse(isReady);
 
-                        Assert.True(isReady.CommandResponseReceived);
+                            Assert.True(isReady.CommandResponseReceived);
+                        }
+
+                        Assert.True(optionCommand.ErrorText == default(string));
                     }
-
-                    Assert.True(optionCommand.ErrorText == default(string));
                 }
             }
         }
@@ -80,17 +88,21 @@ namespace TestChessterUciCore
         [Fact]
         public void timeout_when_specified()
         {
-            Debug.WriteLine("timeout_when_specified()");
-            using (var uci = new UniversalChessInterface(_testUtility.EngineController))
-            {
-                using (var uciCommand = uci.CommandFactory.CreateCommand<UciCommand>())
-                {
-                    uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 25); // 25 milliseconds
-                    uci.SendCommand(uciCommand);
-                    Thread.Sleep(50);
+            Console.WriteLine("\tChessCommandShould.timeout_when_specified");
 
-                    Assert.False(uciCommand.CommandResponseReceived);
-                    Assert.True(uciCommand.CommandTimeoutElapsed);
+            using(var testUtility = new TestUtility())
+            {
+                using (var uci = new UniversalChessInterface(testUtility.EngineController))
+                {
+                    using (var uciCommand = uci.CommandFactory.CreateCommand<UciCommand>())
+                    {
+                        uciCommand.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 25); // 25 milliseconds
+                        uci.SendCommand(uciCommand);
+                        Thread.Sleep(50);
+
+                        Assert.False(uciCommand.CommandResponseReceived);
+                        Assert.True(uciCommand.CommandTimeoutElapsed);
+                    }
                 }
             }
         }
@@ -98,14 +110,19 @@ namespace TestChessterUciCore
         [Fact]
         public void quit_to_end_program()
         {
-            using (var uci = new UniversalChessInterface(_testUtility.EngineController))
-            {
-                uci.SetUciMode();
-                using (var quitCommand = uci.CommandFactory.CreateCommand<QuitCommand>())
-                {
-                    uci.SendCommand(quitCommand);
+            Console.WriteLine("\tChessCommandShould.quit_to_end_program");
 
-                    Assert.True(quitCommand.ErrorText == default(string));
+            using(var testUtility = new TestUtility())
+            {
+                using (var uci = new UniversalChessInterface(testUtility.EngineController))
+                {
+                    uci.SetUciMode();
+                    using (var quitCommand = uci.CommandFactory.CreateCommand<QuitCommand>())
+                    {
+                        uci.SendCommand(quitCommand);
+
+                        Assert.True(quitCommand.ErrorText == default(string));
+                    }
                 }
             }
         }
@@ -113,41 +130,46 @@ namespace TestChessterUciCore
         [Fact]
         public void allow_the_engine_to_go()
         {
-            using (var uci = new UniversalChessInterface(_testUtility.EngineController))
-            {
-                uci.SetUciMode();
-                using (var isReadyCommand = uci.CommandFactory.CreateCommand<IsReadyCommand>())
-                {
-                    uci.SendCommand(isReadyCommand);
-                    uci.WaitForResponse(isReadyCommand);
+            Console.WriteLine("\tChessCommandShould.allow_the_engine_to_go");
 
-                    Assert.True(isReadyCommand.CommandResponseReceived);
-                    using(var newGameCommand = uci.CommandFactory.CreateCommand<UciNewGame>())
+            using(var testUtility = new TestUtility())
+            {
+                using (var uci = new UniversalChessInterface(testUtility.EngineController))
+                {
+                    uci.SetUciMode();
+                    using (var isReadyCommand = uci.CommandFactory.CreateCommand<IsReadyCommand>())
                     {
-                        uci.SendCommand(newGameCommand);
                         uci.SendCommand(isReadyCommand);
                         uci.WaitForResponse(isReadyCommand);
 
-                        using (var positionCommand = uci.CommandFactory.CreateCommand<PositionCommand>())
+                        Assert.True(isReadyCommand.CommandResponseReceived);
+                        using(var newGameCommand = uci.CommandFactory.CreateCommand<UciNewGame>())
                         {
-                            positionCommand.IsStartPosition = true;
-                            positionCommand.FenString = "e2e4 e7e5";
-                            uci.SendCommand(positionCommand);
+                            uci.SendCommand(newGameCommand);
+                            uci.SendCommand(isReadyCommand);
+                            uci.WaitForResponse(isReadyCommand);
 
-                            using (var goCommand = uci.CommandFactory.CreateCommand<GoCommand>())
+                            using (var positionCommand = uci.CommandFactory.CreateCommand<PositionCommand>())
                             {
-                                goCommand.Infinite = true;
-                                uci.SendCommand(goCommand);
-                                Thread.Sleep(500); // Allow the engine time to "think"
-                                uci.SendCommand(uci.CommandFactory.CreateCommand<StopCommand>());
-                                uci.WaitForResponse(goCommand);
+                                positionCommand.IsStartPosition = true;
+                                positionCommand.FenString = "e2e4 e7e5";
+                                uci.SendCommand(positionCommand);
 
-                                Assert.True(!string.IsNullOrWhiteSpace(goCommand.InfoResponse.ToString()));
-                                Debug.WriteLine(goCommand.InfoResponse.ToString());
-                                Assert.True(!string.IsNullOrWhiteSpace(goCommand.BestMove));
-                                Debug.WriteLine(goCommand.BestMove);
+                                using (var goCommand = uci.CommandFactory.CreateCommand<GoCommand>())
+                                {
+                                    goCommand.Infinite = true;
+                                    uci.SendCommand(goCommand);
+                                    Thread.Sleep(500); // Allow the engine time to "think"
+                                    uci.SendCommand(uci.CommandFactory.CreateCommand<StopCommand>());
+                                    uci.WaitForResponse(goCommand);
 
-                                uci.SendCommand(uci.CommandFactory.CreateCommand<QuitCommand>());
+                                    Assert.True(!string.IsNullOrWhiteSpace(goCommand.InfoResponse.ToString()));
+                                    Debug.WriteLine(goCommand.InfoResponse.ToString());
+                                    Assert.True(!string.IsNullOrWhiteSpace(goCommand.BestMove));
+                                    Debug.WriteLine(goCommand.BestMove);
+
+                                    uci.SendCommand(uci.CommandFactory.CreateCommand<QuitCommand>());
+                                }
                             }
                         }
                     }
@@ -158,6 +180,8 @@ namespace TestChessterUciCore
         [Fact]
         public void support_registration()
         {
+            Console.WriteLine("\tChessCommandShould.support_registration");
+            
             using (var uci = new UniversalChessInterface(new FakeEngineController()))
             {
                 uci.SetUciMode();
@@ -181,6 +205,8 @@ namespace TestChessterUciCore
         [Fact]
         public void allow_registration_later()
         {
+            Console.WriteLine("\tChessCommandShould.allow_registration_later");
+
             using (var uci = new UniversalChessInterface(new FakeEngineController()))
             {
                 uci.SetUciMode();
@@ -202,6 +228,8 @@ namespace TestChessterUciCore
         [Fact]
         public void throw_when_registration_code_invalid()
         {
+            Console.WriteLine("\tChessCommandShould.throw_when_registration_code_invalid");
+
             using (var uci = new UniversalChessInterface(new FakeEngineController()))
             {
                 uci.SetUciMode();
@@ -218,6 +246,8 @@ namespace TestChessterUciCore
         [Fact]
         public void throw_when_registration_name_invalid()
         {
+            Console.WriteLine("\tChessCommandShould.throw_when_registration_name_invalid");
+
             using (var uci = new UniversalChessInterface(new FakeEngineController()))
             {
                 uci.SetUciMode();
@@ -234,6 +264,8 @@ namespace TestChessterUciCore
         [Fact]
         public void support_copy_protected_engines()
         {
+            Console.WriteLine("\tChessCommandShould.support_copy_protected_engines");
+
             var engineController = new FakeEngineController();
             engineController.IsCopyProtected = true;
 
@@ -250,6 +282,8 @@ namespace TestChessterUciCore
         [Fact]
         public void throw_when_command_response_period_invalid()
         {
+            Console.WriteLine("\tChessCommandShould.throw_when_command_response_period_invalid");
+
             using (var uci = new UniversalChessInterface(new FakeEngineController()))
             {
                 using (var registerCommand = uci.CommandFactory.CreateCommand<RegisterCommand>())

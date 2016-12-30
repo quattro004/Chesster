@@ -20,6 +20,8 @@ namespace TestChessterUciCore.Fakes
 
         public void Dispose()
         {
+            DataReceived = null;
+            ErrorReceived = null;
         }
 
         public void KillEngine()

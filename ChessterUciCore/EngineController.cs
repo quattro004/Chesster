@@ -182,6 +182,7 @@ namespace ChessterUciCore
             _chessEngineProcess.StandardInput.AutoFlush = true;
             _chessEngineProcess.BeginErrorReadLine();
             _chessEngineProcess.BeginOutputReadLine();
+            Logger.LogInformation($"The chess engine process is started, process id {_chessEngineProcess.Id}");
         }
         
         #endregion
