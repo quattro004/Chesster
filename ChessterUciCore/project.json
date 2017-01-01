@@ -8,7 +8,9 @@
     "Microsoft.Extensions.Logging": "1.1.0",
     "Microsoft.Extensions.Logging.Debug": "1.1.0",
     "System.Diagnostics.Process": "4.3.0",
-    "System.Threading.Thread": "4.3.0"
+    "System.Threading.Thread": "4.3.0",
+    "Microsoft.Extensions.Configuration": "1.1.0",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0"
   },
   "frameworks": {
     "netcoreapp1.1": {

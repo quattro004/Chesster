@@ -11,13 +11,10 @@ namespace TestChessterUciCore
         {
             Console.WriteLine("\tUniversalChessInterfaceShould.start_engine_process");
 
-            using(var testUtility = new TestUtility())
+            using (var uci = new UniversalChessInterface())
             {
-                using (var uci = new UniversalChessInterface(testUtility.EngineController))
-                {
-                    uci.SetUciMode();
-                    Assert.True(uci.IsEngineProcessRunning, "The engine failed to start.");
-                }
+                uci.SetUciMode();
+                Assert.True(uci.IsEngineProcessRunning, "The engine failed to start.");
             }
         }
 
@@ -26,13 +23,10 @@ namespace TestChessterUciCore
         {
             Console.WriteLine("\tUniversalChessInterfaceShould.receive_uciok_after_setting_uci_mode");
 
-            using(var testUtility = new TestUtility())
+            using (var uci = new UniversalChessInterface())
             {
-                using (var uci = new UniversalChessInterface(testUtility.EngineController))
-                {
-                    uci.SetUciMode();
-                    Assert.True(uci.UciModeComplete, "The engine failed to fully initialize.");
-                }
+                uci.SetUciMode();
+                Assert.True(uci.UciModeComplete, "The engine failed to fully initialize.");
             }
         }
 
@@ -41,14 +35,11 @@ namespace TestChessterUciCore
         {
             Console.WriteLine("\tUniversalChessInterfaceShould.contain_options_after_initialization");
 
-            using(var testUtility = new TestUtility())
+            using (var uci = new UniversalChessInterface())
             {
-                using (var uci = new UniversalChessInterface(testUtility.EngineController))
-                {
-                    uci.SetUciMode();
-                    Assert.NotNull(uci.ChessEngineOptions);
-                    Assert.NotEmpty(uci.ChessEngineOptions);
-                }
+                uci.SetUciMode();
+                Assert.NotNull(uci.ChessEngineOptions);
+                Assert.NotEmpty(uci.ChessEngineOptions);
             }
         }
     }

@@ -5,8 +5,6 @@
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "System.IO.FileSystem": "4.3.0",
     "Microsoft.DotNet.InternalAbstractions": "1.0.0",
-    "Microsoft.Extensions.Configuration.Json": "1.1.0",
-    "Microsoft.Extensions.Configuration": "1.1.0",
     "ChessterUciCore": "1.0.0-*"
   },
   "testRunner": "xunit",

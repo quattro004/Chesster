@@ -1,9 +1,11 @@
-﻿using ChessterUciCore.Commands;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
+using ChessterUciCore.Commands;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace ChessterUciCore
 {
@@ -21,18 +23,21 @@ namespace ChessterUciCore
         #region Properties
 
         /// <summary>
-        /// Performs initialization for the chess interface to the engine.
-        /// <param name="engineController"><see cref="IEngineController"/> which controls the chess
-        /// engine process.</param>
+        /// Performs initialization for the chess interface to the engine. Creates a default
+        /// implementation of the engine controller <see cref="EngineController" />.
         /// </summary>
-        /// <exception cref="ChessterEngineException">Thrown if the <paramref name="engineController"/>
-        /// is null.</exception>
+        public UniversalChessInterface()
+        {
+            ChessEngineController = CreateEngineController();
+            CommandFactory = new ChessCommandFactory(ChessEngineController);
+        }
+
+        /// <summary>
+        /// Performs initialization for the chess interface to the engine given the specified
+        /// <paramref name="engineController" />.
+        /// </summary>
         public UniversalChessInterface(IEngineController engineController)
         {
-            if (null == engineController)
-            {
-                throw new ChessterEngineException(Messages.NullEngineController);
-            }
             ChessEngineController = engineController;
             CommandFactory = new ChessCommandFactory(ChessEngineController);
         }
@@ -67,6 +72,11 @@ namespace ChessterUciCore
         /// Factory for creating chess commands.
         /// </summary>
         public ChessCommandFactory CommandFactory { get; private set; }
+        
+        /// <summary>
+        /// Root of the configuration, used to read in the chess engine path from config.json.
+        /// </summary>
+        public IConfigurationRoot Config { get; private set; }
 
         #endregion
 
@@ -130,6 +140,29 @@ namespace ChessterUciCore
         }
 
         #region Private Methods
+
+        private IEngineController CreateEngineController()
+        {
+            Logger.LogInformation($"CreateEngineController()");
+            var currentDirectory = Directory.GetCurrentDirectory();
+            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.SetBasePath(currentDirectory);
+            var configFile = Path.Combine(currentDirectory, "ChessterUciCore", "config.json");
+            configurationBuilder.AddJsonFile(configFile);
+            Config = configurationBuilder.Build();
+            var opSys = Environment.GetEnvironmentVariable("OS");
+            string chessEnginePath = null;
+            if (!string.IsNullOrWhiteSpace(opSys) && opSys.ToLower().Contains("windows"))
+            {
+                chessEnginePath = Path.Combine(currentDirectory, Config["ChessEnginePathWindows"]);
+            }
+            else
+            {
+                chessEnginePath = Path.Combine(currentDirectory, Config["ChessEnginePathLinux"]);
+            }
+            Logger.LogInformation($"chessEnginePath is {chessEnginePath}");
+            return new EngineController(chessEnginePath);
+        }
         
         #endregion
 

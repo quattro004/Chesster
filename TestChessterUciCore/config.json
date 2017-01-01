@@ -1,4 +1,0 @@
-﻿{
-  "ChessEnginePathWindows": "stockfish-win\\stockfish_8_x64.exe",
-  "ChessEnginePathLinux": "stockfish-linux//stockfish_8_x64"
-}
