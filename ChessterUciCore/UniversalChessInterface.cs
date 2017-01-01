@@ -179,7 +179,15 @@ namespace ChessterUciCore
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    ChessEngineController.Dispose();
+                    if(ChessEngineController != null)
+                    {
+                        ChessEngineController.Dispose();
+                        ChessEngineController = null;                        
+                    }
+                    if(CommandFactory != null)
+                    {
+                        CommandFactory = null;
+                    }
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

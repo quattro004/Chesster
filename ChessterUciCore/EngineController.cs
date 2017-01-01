@@ -77,6 +77,7 @@ namespace ChessterUciCore
                     _chessEngineProcess.CancelErrorRead();
                     _chessEngineProcess.CancelOutputRead();
                     _chessEngineProcess.Dispose();
+                    _chessEngineProcess = null;
                 }
             }
 

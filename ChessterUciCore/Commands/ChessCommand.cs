@@ -262,8 +262,11 @@ namespace ChessterUciCore.Commands
                     {
                         _commandTimer.Dispose();
                     }
-                    ChessEngineController.ErrorReceived -= EngineController_ErrorReceived;
-                    ChessEngineController = null;
+                    if(ChessEngineController != null)
+                    {
+                        ChessEngineController.ErrorReceived -= EngineController_ErrorReceived;
+                        ChessEngineController = null;
+                    }
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

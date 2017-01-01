@@ -25,6 +25,7 @@ namespace TestChessterUciCore
 
                     Assert.True(isReadyCommand.CommandResponseReceived);
                 }
+                
             }
         }
 
@@ -43,6 +44,7 @@ namespace TestChessterUciCore
 
                     Assert.True(bogusCommand.ErrorText.StartsWith("Unknown command"));
                 }
+                
             }
         }
 
@@ -73,6 +75,7 @@ namespace TestChessterUciCore
 
                     Assert.True(optionCommand.ErrorText == default(string));
                 }
+                
             }
         }
 
@@ -92,6 +95,7 @@ namespace TestChessterUciCore
                     Assert.False(uciCommand.CommandResponseReceived);
                     Assert.True(uciCommand.CommandTimeoutElapsed);
                 }
+                
             }
         }
 
@@ -109,6 +113,7 @@ namespace TestChessterUciCore
 
                     Assert.True(quitCommand.ErrorText == default(string));
                 }
+                
             }
         }
 
@@ -156,6 +161,7 @@ namespace TestChessterUciCore
                         }
                     }
                 }
+                
             }
         }
 

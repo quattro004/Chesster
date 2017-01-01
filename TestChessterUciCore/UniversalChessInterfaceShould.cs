@@ -13,8 +13,8 @@ namespace TestChessterUciCore
 
             using (var uci = new UniversalChessInterface())
             {
-                uci.SetUciMode();
                 Assert.True(uci.IsEngineProcessRunning, "The engine failed to start.");
+                uci.ChessEngineController.KillEngine();
             }
         }
 
