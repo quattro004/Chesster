@@ -147,7 +147,7 @@ namespace ChessterUciCore
             var currentDirectory = Directory.GetCurrentDirectory();
             ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.SetBasePath(currentDirectory);
-            var configFile = Path.Combine(currentDirectory, "ChessterUciCore", "config.json");
+            var configFile = Path.Combine(currentDirectory, "config.json");
             configurationBuilder.AddJsonFile(configFile);
             Config = configurationBuilder.Build();
             var opSys = Environment.GetEnvironmentVariable("OS");
