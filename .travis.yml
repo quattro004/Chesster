@@ -1,5 +1,5 @@
-dist:
-sudo:
+dist: trusty
+sudo: required
 language: csharp
 mono: none
 dotnet: 1.0.1
