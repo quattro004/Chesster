@@ -1,9 +1,9 @@
-dist: trusty
-sudo: required
+dist:
+sudo:
 language: csharp
 mono: none
-dotnet: 1.0.0-preview2-1-003177
-solution: Chesster.sln
+dotnet: 1.0.1
+solution:
 script:
   - dotnet restore
   - dotnet test TestChessterUciCore -c Release
