@@ -207,10 +207,13 @@ namespace ChessterUciCore.Commands
 
         #endregion
 
-        internal override void SendCommand()
+        /// <summary>
+        /// Clears InfoResponse before sending.
+        /// </summary>
+        public override void Send()
         {
             InfoResponse.Clear();
-            base.SendCommand();
+            base.Send();
         }
 
         /// <summary>

@@ -41,12 +41,15 @@ namespace ChessterUciCore.Commands
         /// </summary>
         public Collection<OptionData> OptionValues { get; }
 
-        internal override void SendCommand()
+        /// <summary>
+        /// Overridden to send for each option in OptionValues.
+        /// </summary>
+        public override void Send()
         {
             foreach (var option in OptionValues)
             {
                 _commandText = string.Format("setoption name {0} value {1}", option.Name, option.Default);
-                base.SendCommand();
+                base.Send();
             }
         }
     }

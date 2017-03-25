@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using System.IO;
 using ChessterUciCore.Commands;
 using Microsoft.Extensions.Logging;
@@ -15,10 +14,12 @@ namespace ChessterUciCore
     public class UniversalChessInterface : IDisposable
     {
         private bool _disposedValue = false; // To detect redundant calls
+        private readonly ChessCommandFactory _commandFactory;
+        
         /// <summary>
         /// Logger for this class.
         /// </summary>
-        ILogger Logger { get; } = ChessterLogging.CreateLogger<UniversalChessInterface>();
+        private ILogger Logger { get; } = ChessterLogging.CreateLogger<UniversalChessInterface>();
 
         #region Properties
 
@@ -29,7 +30,7 @@ namespace ChessterUciCore
         public UniversalChessInterface()
         {
             ChessEngineController = CreateEngineController();
-            CommandFactory = new ChessCommandFactory(ChessEngineController);
+            _commandFactory = new ChessCommandFactory(ChessEngineController);
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace ChessterUciCore
         public UniversalChessInterface(IEngineController engineController)
         {
             ChessEngineController = engineController;
-            CommandFactory = new ChessCommandFactory(ChessEngineController);
+            _commandFactory = new ChessCommandFactory(ChessEngineController);
         }
 
         /// <summary>
@@ -67,11 +68,6 @@ namespace ChessterUciCore
         /// engine process.
         /// </summary>
         public IEngineController ChessEngineController { get; private set; }
-
-        /// <summary>
-        /// Factory for creating chess commands.
-        /// </summary>
-        public ChessCommandFactory CommandFactory { get; private set; }
         
         /// <summary>
         /// Root of the configuration, used to read in the chess engine path from config.json.
@@ -88,9 +84,9 @@ namespace ChessterUciCore
         /// <remarks><see cref="UciCommand"/> for more information.</remarks>
         public void SetUciMode()
         {
-            using (var uciCommand = CommandFactory.CreateCommand<UciCommand>())
+            using (var uciCommand = _commandFactory.CreateCommand<UciCommand>())
             {
-                SendCommand(uciCommand);
+                uciCommand.Send();
                 WaitForResponse(uciCommand);
                 if (uciCommand.CommandResponseReceived)
                 {
@@ -126,17 +122,13 @@ namespace ChessterUciCore
         }
 
         /// <summary>
-        /// Sends the <paramref name="command"/> to the chess engine.
+        /// Creates a <see cref="ChessCommand"/> of the type specified.
         /// </summary>
-        /// <param name="command"><see cref="ChessCommand"/></param>
-        /// <returns><see cref="Task"/></returns>
-        public void SendCommand(ChessCommand command)
+        /// <typeparam name="T">Type of chess command to create.</typeparam>
+        /// <returns>Instance of <see cref="ChessCommand"/> using the specified type.</returns>
+        public T CreateCommand<T>() where T : ChessCommand, new()
         {
-            if(null == command)
-            {
-                throw new ChessterEngineException(Messages.NullCommand);
-            }
-            command.SendCommand();
+            return _commandFactory.CreateCommand<T>();
         }
 
         #region Private Methods
@@ -183,10 +175,6 @@ namespace ChessterUciCore
                     {
                         ChessEngineController.Dispose();
                         ChessEngineController = null;                        
-                    }
-                    if(CommandFactory != null)
-                    {
-                        CommandFactory = null;
                     }
                 }
 

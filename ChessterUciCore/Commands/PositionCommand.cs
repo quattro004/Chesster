@@ -32,11 +32,14 @@
             }
         }
 
-        internal override void SendCommand()
+        /// <summary>
+        /// Formats the command text before sending.
+        /// </summary>
+        public override void Send()
         {
             _commandText = string.Format("position{0} moves {1}", IsStartPosition 
                 ? " startpos" : string.Empty, FenString);
-            base.SendCommand();
+            base.Send();
         }
 
     }

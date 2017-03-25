@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace ChessterUciCore.Commands
@@ -180,7 +179,7 @@ namespace ChessterUciCore.Commands
         /// <summary>
         /// Sends this command to the chess engine.
         /// </summary>
-        internal virtual void SendCommand()
+        public virtual void Send()
         {
             CommandResponseReceived = false;
             EnsureEngineIsRunning();

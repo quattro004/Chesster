@@ -9,7 +9,6 @@
 //------------------------------------------------------------------------------
 
 namespace ChessterUciCore {
-    using System;
     using System.Reflection;
     
     
