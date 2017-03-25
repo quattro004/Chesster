@@ -3,7 +3,7 @@ sudo: required
 language: csharp
 mono: none
 dotnet: 1.0.1
-solution:
+solution: Chesster.sln
 script:
   - dotnet restore
-  - dotnet test TestChessterUciCore -c Release
+  - dotnet test ./TestChessterUciCore/TestChessterUciCore.csproj -c Release
