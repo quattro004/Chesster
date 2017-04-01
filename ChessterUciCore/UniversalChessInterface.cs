@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.IO;
 using ChessterUciCore.Commands;
 using Microsoft.Extensions.Logging;
@@ -14,14 +13,12 @@ namespace ChessterUciCore
     public class UniversalChessInterface : IDisposable
     {
         private bool _disposedValue = false; // To detect redundant calls
-        private readonly ChessCommandFactory _commandFactory;
+        private ChessCommandFactory _commandFactory;
         
         /// <summary>
         /// Logger for this class.
         /// </summary>
         private ILogger Logger { get; } = ChessterLogging.CreateLogger<UniversalChessInterface>();
-
-        #region Properties
 
         /// <summary>
         /// Performs initialization for the chess interface to the engine. Creates a default
@@ -29,8 +26,9 @@ namespace ChessterUciCore
         /// </summary>
         public UniversalChessInterface()
         {
+            Logger.LogTrace("UniversalChessInterface()");
             ChessEngineController = CreateEngineController();
-            _commandFactory = new ChessCommandFactory(ChessEngineController);
+            Initialize();
         }
 
         /// <summary>
@@ -39,9 +37,12 @@ namespace ChessterUciCore
         /// </summary>
         public UniversalChessInterface(IEngineController engineController)
         {
+            Logger.LogTrace("UniversalChessInterface() with an injected engineController");
             ChessEngineController = engineController;
-            _commandFactory = new ChessCommandFactory(ChessEngineController);
+            Initialize();
         }
+
+        #region Properties
 
         /// <summary>
         /// Determines whether or not the chess engine process is currently running.
@@ -77,17 +78,27 @@ namespace ChessterUciCore
         #endregion
 
         /// <summary>
+        /// Performs common initialization.
+        /// </summary>
+        private void Initialize()
+        {
+            _commandFactory = new ChessCommandFactory(ChessEngineController);
+            SetUciMode();
+        }
+
+        /// <summary>
         /// Sends an asynchronous command to the chess engine to enable UCI mode.
         /// When successful the <see cref="ChessEngineOptions"/> property will contain
         /// the options that the engine supports.
         /// </summary>
         /// <remarks><see cref="UciCommand"/> for more information.</remarks>
-        public void SetUciMode()
+        private void SetUciMode()
         {
             using (var uciCommand = _commandFactory.CreateCommand<UciCommand>())
             {
-                uciCommand.Send();
-                WaitForResponse(uciCommand);
+                var uciCommandTask = uciCommand.SendAsync();
+                uciCommandTask.Wait(uciCommand.CommandResponsePeriod);
+                
                 if (uciCommand.CommandResponseReceived)
                 {
                     ChessEngineOptions = uciCommand.Options;
@@ -106,22 +117,6 @@ namespace ChessterUciCore
         }
 
         /// <summary>
-        /// Waits for the command's response to be returned or the timeout period to expire.
-        /// </summary>
-        /// <param name="command"></param>
-        public void WaitForResponse(ChessCommand command)
-        {
-            if(null == command)
-            {
-                throw new ChessterEngineException(Messages.NullCommand);
-            }
-            while (!command.CommandResponseReceived && !command.CommandTimeoutElapsed)
-            {
-                Thread.Sleep(command.TimerInterval);
-            }
-        }
-
-        /// <summary>
         /// Creates a <see cref="ChessCommand"/> of the type specified.
         /// </summary>
         /// <typeparam name="T">Type of chess command to create.</typeparam>
@@ -135,7 +130,8 @@ namespace ChessterUciCore
 
         private IEngineController CreateEngineController()
         {
-            Logger.LogInformation($"CreateEngineController()");
+            Logger.LogTrace("CreateEngineController()");
+
             var currentDirectory = Directory.GetCurrentDirectory();
             ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.SetBasePath(currentDirectory);
@@ -152,7 +148,7 @@ namespace ChessterUciCore
             {
                 chessEnginePath = Path.Combine(currentDirectory, Config["ChessEnginePathLinux"]);
             }
-            Logger.LogInformation($"chessEnginePath is {chessEnginePath}");
+            Logger.LogTrace($"chessEnginePath is {chessEnginePath}");
             return new EngineController(chessEnginePath);
         }
         

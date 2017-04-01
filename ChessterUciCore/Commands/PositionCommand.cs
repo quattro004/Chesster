@@ -1,4 +1,6 @@
-﻿namespace ChessterUciCore.Commands
+﻿using System.Threading.Tasks;
+
+namespace ChessterUciCore.Commands
 {
     /// <summary>
     /// Set up the position described in fenstring on the internal board and play the moves on 
@@ -35,11 +37,11 @@
         /// <summary>
         /// Formats the command text before sending.
         /// </summary>
-        public override void Send()
+        public override async Task SendAsync()
         {
             _commandText = string.Format("position{0} moves {1}", IsStartPosition 
                 ? " startpos" : string.Empty, FenString);
-            base.Send();
+            await base.SendAsync();
         }
 
     }

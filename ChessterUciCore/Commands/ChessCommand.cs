@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ChessterUciCore.Commands
 {
@@ -140,7 +141,7 @@ namespace ChessterUciCore.Commands
         /// <returns><see cref="bool"/> indicating a valid response.</returns>
         protected bool ResponseIsNotNullOrEmpty(string chessEngineResponse)
         {
-            Logger.LogInformation($"Data received: {chessEngineResponse}.");
+            Logger.LogTrace($"Data received: {chessEngineResponse}.");
 
             return !string.IsNullOrWhiteSpace(chessEngineResponse);
         }
@@ -152,7 +153,7 @@ namespace ChessterUciCore.Commands
         /// <param name="state"></param>
         protected virtual void CommandTimerCallback(object state)
         {
-            Logger.LogInformation("CommandTimerCallback()");
+            Logger.LogTrace("CommandTimerCallback()");
 
             if (CommandTimeoutElapsed || CommandResponseReceived)
             {
@@ -167,27 +168,38 @@ namespace ChessterUciCore.Commands
         {
             if (_commandTimer != null)
             {
-                Logger.LogInformation("Stopping the command timer.");
+                Logger.LogTrace("Stopping the command timer.");
                 if(!_commandTimer.Change(Timeout.Infinite, Timeout.Infinite)) // Stop the timer.
                 {
                     Logger.LogWarning("Unable to stop the timer using the change method.");
                 }
-                _commandTimer = null;
             }
         }
 
         /// <summary>
-        /// Sends this command to the chess engine.
+        /// Sends this command to the chess engine and waits for a response.
         /// </summary>
-        public virtual void Send()
+        public virtual async Task SendAsync()
         {
             CommandResponseReceived = false;
             EnsureEngineIsRunning();
             ErrorText = default(string);
-            Logger.LogInformation($"Sending the {CommandText} command to the chess engine.");
+            Logger.LogTrace($"Sending the {CommandText} command to the chess engine.");
             ChessEngineController.SendCommand(CommandText);
             _commandStartTime = DateTime.Now;
             _commandTimer = new Timer(CommandTimerCallback, null, TimerInterval, TimerInterval);
+            await WaitForResponseAsync();
+        }
+
+        /// <summary>
+        /// Waits for the command's response to be returned or the timeout period to expire.
+        /// </summary>
+        private async Task WaitForResponseAsync()
+        {
+            while (!CommandResponseReceived && !CommandTimeoutElapsed)
+            {
+                await Task.Delay(TimerInterval);
+            }
         }
 
         /// <summary>

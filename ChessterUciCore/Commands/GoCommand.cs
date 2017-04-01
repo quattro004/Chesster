@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 
 namespace ChessterUciCore.Commands
 {
@@ -210,10 +211,10 @@ namespace ChessterUciCore.Commands
         /// <summary>
         /// Clears InfoResponse before sending.
         /// </summary>
-        public override void Send()
+        public override async Task SendAsync()
         {
             InfoResponse.Clear();
-            base.Send();
+            await base.SendAsync();
         }
 
         /// <summary>

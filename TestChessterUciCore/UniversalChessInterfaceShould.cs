@@ -1,15 +1,17 @@
-﻿using System;
-using ChessterUciCore;
+﻿using ChessterUciCore;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace TestChessterUciCore
 {
     public class UniversalChessInterfaceShould
     {
+        private static ILogger Logger {get;} = TestUtility.LoggerFactory.CreateLogger<UniversalChessInterfaceShould>();
+        
         [Fact]
         public void start_engine_process()
         {
-            Console.WriteLine("\tUniversalChessInterfaceShould.start_engine_process");
+            Logger.LogInformation("\tUniversalChessInterfaceShould.start_engine_process");
 
             using (var uci = new UniversalChessInterface())
             {
@@ -21,11 +23,10 @@ namespace TestChessterUciCore
         [Fact]
         public void receive_uciok_after_setting_uci_mode()
         {
-            Console.WriteLine("\tUniversalChessInterfaceShould.receive_uciok_after_setting_uci_mode");
+            Logger.LogInformation("\tUniversalChessInterfaceShould.receive_uciok_after_setting_uci_mode");
 
             using (var uci = new UniversalChessInterface())
             {
-                uci.SetUciMode();
                 Assert.True(uci.UciModeComplete, "The engine failed to fully initialize.");
             }
         }
@@ -33,11 +34,10 @@ namespace TestChessterUciCore
         [Fact]
         public void contain_options_after_initialization()
         {
-            Console.WriteLine("\tUniversalChessInterfaceShould.contain_options_after_initialization");
+            Logger.LogInformation("\tUniversalChessInterfaceShould.contain_options_after_initialization");
 
             using (var uci = new UniversalChessInterface())
             {
-                uci.SetUciMode();
                 Assert.NotNull(uci.ChessEngineOptions);
                 Assert.NotEmpty(uci.ChessEngineOptions);
             }

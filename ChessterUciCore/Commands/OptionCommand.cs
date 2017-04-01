@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace ChessterUciCore.Commands
 {
@@ -44,12 +45,12 @@ namespace ChessterUciCore.Commands
         /// <summary>
         /// Overridden to send for each option in OptionValues.
         /// </summary>
-        public override void Send()
+        public override async Task SendAsync()
         {
             foreach (var option in OptionValues)
             {
                 _commandText = string.Format("setoption name {0} value {1}", option.Name, option.Default);
-                base.Send();
+                await base.SendAsync();
             }
         }
     }

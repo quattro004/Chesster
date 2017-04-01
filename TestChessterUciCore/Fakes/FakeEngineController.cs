@@ -2,11 +2,14 @@
 using System;
 using ChessterUciCore.Commands;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace TestChessterUciCore.Fakes
 {
     public class FakeEngineController : IEngineController
     {
+        private static ILogger Logger {get;} = ChessterLogging.CreateLogger<FakeEngineController>();
+        
         public bool IsEngineRunning
         {
             get
@@ -30,6 +33,8 @@ namespace TestChessterUciCore.Fakes
 
         public void SendCommand(string command)
         {
+            Logger.LogTrace("SendCommand: {0}", command);
+
             if (command.StartsWith("register name"))
             {
                 OnRaiseDataReceived(this, new ChessCommandReceivedEventArgs("registration checking"));
