@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessterUciCore", "Chesster
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestChessterUciCore", "TestChessterUciCore\TestChessterUciCore.csproj", "{483FC69D-B72D-4E45-9F44-F824EB856FA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessterWebApi", "ChessterWebApi\ChessterWebApi.csproj", "{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{483FC69D-B72D-4E45-9F44-F824EB856FA8}.Release|x64.Build.0 = Release|x64
 		{483FC69D-B72D-4E45-9F44-F824EB856FA8}.Release|x86.ActiveCfg = Release|x86
 		{483FC69D-B72D-4E45-9F44-F824EB856FA8}.Release|x86.Build.0 = Release|x86
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Debug|x64.ActiveCfg = Debug|x64
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Debug|x64.Build.0 = Debug|x64
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Debug|x86.ActiveCfg = Debug|x86
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Debug|x86.Build.0 = Debug|x86
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Release|x64.ActiveCfg = Release|x64
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Release|x64.Build.0 = Release|x64
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Release|x86.ActiveCfg = Release|x86
+		{1BFAD0A8-9B10-439B-89A6-F9693BCC0BEF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal

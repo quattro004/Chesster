@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using ChessterUciCore.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
@@ -23,11 +22,16 @@ namespace ChessterUciCore
         /// <summary>
         /// Performs initialization for the chess interface to the engine. Creates a default
         /// implementation of the engine controller <see cref="EngineController" />.
+        /// <param name="chessEnginePath">Path to the chess engine exe.</param>
         /// </summary>
-        public UniversalChessInterface()
+        public UniversalChessInterface(string chessEnginePath)
         {
             Logger.LogTrace("UniversalChessInterface()");
-            ChessEngineController = CreateEngineController();
+            if(string.IsNullOrWhiteSpace(chessEnginePath))
+            {
+                throw new ArgumentException(nameof(chessEnginePath));
+            }
+            ChessEngineController = CreateEngineController(chessEnginePath);
             Initialize();
         }
 
@@ -62,7 +66,7 @@ namespace ChessterUciCore
         /// <summary>
         /// Options received after setting up UCI mode.
         /// </summary>
-        public Dictionary<string, OptionData> ChessEngineOptions { get; private set; }
+        public IDictionary<string, OptionData> ChessEngineOptions { get; private set; }
 
         /// <summary>
         /// Implementation of the <see cref="IEngineController"/> which manages the chess
@@ -128,26 +132,9 @@ namespace ChessterUciCore
 
         #region Private Methods
 
-        private IEngineController CreateEngineController()
+        private IEngineController CreateEngineController(string chessEnginePath)
         {
             Logger.LogTrace("CreateEngineController()");
-
-            var currentDirectory = Directory.GetCurrentDirectory();
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.SetBasePath(currentDirectory);
-            var configFile = Path.Combine(currentDirectory, "config.json");
-            configurationBuilder.AddJsonFile(configFile);
-            Config = configurationBuilder.Build();
-            var opSys = Environment.GetEnvironmentVariable("OS");
-            string chessEnginePath = null;
-            if (!string.IsNullOrWhiteSpace(opSys) && opSys.ToLower().Contains("windows"))
-            {
-                chessEnginePath = Path.Combine(currentDirectory, Config["ChessEnginePathWindows"]);
-            }
-            else
-            {
-                chessEnginePath = Path.Combine(currentDirectory, Config["ChessEnginePathLinux"]);
-            }
             Logger.LogTrace($"chessEnginePath is {chessEnginePath}");
             return new EngineController(chessEnginePath);
         }

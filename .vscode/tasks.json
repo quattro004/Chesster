@@ -7,7 +7,7 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/TestChessterUciCore/TestChessterUciCore.csproj"
+                "${workspaceRoot}/Chesster.sln"               
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"

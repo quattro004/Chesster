@@ -13,7 +13,7 @@ namespace TestChessterUciCore
     public class ChessCommandShould 
     {
         private static ILogger Logger {get;} = TestUtility.LoggerFactory.CreateLogger<UniversalChessInterfaceShould>();
-                
+
         public ChessCommandShould()
         {
             Logger.LogTrace($"ChessCommandShould(), ManagedThreadId is {Thread.CurrentThread.ManagedThreadId}");
@@ -24,7 +24,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("ChessCommandShould.receive_readyok_after_sending_isready");
 
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 using (var isReadyCommand = uci.CreateCommand<IsReadyCommand>())
                 {
@@ -41,7 +41,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("ChessCommandShould.error_when_engine_doesnt_recognize_command");
             
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 using (var bogusCommand = uci.CreateCommand<BogusCommand>())
                 {
@@ -57,7 +57,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("ChessCommandShould.allow_options_to_be_set");
 
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 using(var optionCommand = uci.CreateCommand<OptionCommand>())
                 {
@@ -86,7 +86,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("ChessCommandShould.timeout_when_specified");
 
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 using (var uciNewGame = uci.CreateCommand<UciNewGame>())
                 {
@@ -108,7 +108,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("ChessCommandShould.quit_to_end_program");
 
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 using (var quitCommand = uci.CreateCommand<QuitCommand>())
                 {
@@ -125,7 +125,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("ChessCommandShould.allow_the_engine_to_go");
 
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 using (var isReadyCommand = uci.CreateCommand<IsReadyCommand>())
                 {

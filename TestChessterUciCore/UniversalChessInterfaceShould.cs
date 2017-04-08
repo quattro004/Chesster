@@ -13,7 +13,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("\tUniversalChessInterfaceShould.start_engine_process");
 
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 Assert.True(uci.IsEngineProcessRunning, "The engine failed to start.");
                 uci.ChessEngineController.KillEngine();
@@ -24,8 +24,9 @@ namespace TestChessterUciCore
         public void receive_uciok_after_setting_uci_mode()
         {
             Logger.LogInformation("\tUniversalChessInterfaceShould.receive_uciok_after_setting_uci_mode");
-
-            using (var uci = new UniversalChessInterface())
+            //
+            // Note: the UciCommand is sent to enable uci mode during construction of the UniversalChessInterface.
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 Assert.True(uci.UciModeComplete, "The engine failed to fully initialize.");
             }
@@ -36,7 +37,7 @@ namespace TestChessterUciCore
         {
             Logger.LogInformation("\tUniversalChessInterfaceShould.contain_options_after_initialization");
 
-            using (var uci = new UniversalChessInterface())
+            using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
                 Assert.NotNull(uci.ChessEngineOptions);
                 Assert.NotEmpty(uci.ChessEngineOptions);

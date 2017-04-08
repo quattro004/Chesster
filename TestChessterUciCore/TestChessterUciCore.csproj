@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
@@ -11,15 +11,19 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../ChessterUciCore/ChessterUciCore.csproj"/>
+    <ProjectReference Include="../ChessterUciCore/ChessterUciCore.csproj" />
     <None Include="nlog.config" CopyToOutputDirectory="Always" />
+    <None Include="stockfish-linux/stockfish_8_x64" CopyToOutputDirectory="Always" />
+    <None Include="stockfish-win/stockfish_8_x64.exe" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0"/>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0"/>
-    <PackageReference Include="xunit" Version="2.2.0"/>
-    <PackageReference Include="System.IO.FileSystem" Version="4.3.0"/>
-    <PackageReference Include="Microsoft.DotNet.InternalAbstractions" Version="1.0.0"/>
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta4"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="Microsoft.DotNet.InternalAbstractions" Version="1.0.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta4" />
   </ItemGroup>
 </Project>

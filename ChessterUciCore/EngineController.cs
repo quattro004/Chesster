@@ -1,5 +1,6 @@
 ﻿using ChessterUciCore.Commands;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -31,7 +32,33 @@ namespace ChessterUciCore
         /// <summary>
         /// Initializes the controller and creates the chess engine process.
         /// </summary>
-        /// <param name="chessEnginePath"></param>
+        /// <param name="chessterOptionsAccessor">Options such as the path to the engine exe.</param>
+        public EngineController(IOptions<ChessterOptions> chessterOptionsAccessor)
+        {
+            if(null == chessterOptionsAccessor)
+            {
+                throw new ArgumentNullException(nameof(chessterOptionsAccessor));
+            }
+            var chessEnginePath = default(string);
+            var chessterOptions = chessterOptionsAccessor.Value;
+            // TODO: figure out a better way to detect OS.
+            var opSys = Environment.GetEnvironmentVariable("OS");
+            if (!string.IsNullOrWhiteSpace(opSys) && opSys.ToLower().Contains("windows"))
+            {
+                chessEnginePath = chessterOptions.ChessEnginePathWindows;
+            }
+            else
+            {
+                chessEnginePath = chessterOptions.ChessEnginePathLinux;
+            }
+            StartChessEngine(chessEnginePath);
+        }
+
+        
+        /// <summary>
+        /// Initializes the controller and creates the chess engine process.
+        /// </summary>
+        /// <param name="chessEnginePath">Path to the engine exe.</param>
         public EngineController(string chessEnginePath)
         {
             StartChessEngine(chessEnginePath);
