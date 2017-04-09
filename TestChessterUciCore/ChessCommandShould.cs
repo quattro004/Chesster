@@ -82,7 +82,7 @@ namespace TestChessterUciCore
         }
 
         [Fact]
-        public void timeout_when_specified()
+        public async Task timeout_when_specifiedAsync()
         {
             Logger.LogInformation("ChessCommandShould.timeout_when_specified");
 
@@ -92,14 +92,14 @@ namespace TestChessterUciCore
                 {
                     uciNewGame.CommandResponsePeriod = new TimeSpan(0, 0, 0, 0, 25); // 25 milliseconds
                     Logger.LogInformation("timeout_when_specified: sending uciNewGame");
-                    var task = uciNewGame.SendAsync();
+                    await uciNewGame.SendAsync();
                     Logger.LogInformation("timeout_when_specified: sleeping");
-                    Thread.Sleep(50);
+                    await Task.Delay(50);
 
                     Assert.False(uciNewGame.CommandResponseReceived);
                     Assert.True(uciNewGame.CommandTimeoutElapsed);
                 }
-                
+
             }
         }
 

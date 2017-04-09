@@ -11,7 +11,7 @@ namespace TestChessterUciCore
         [Fact]
         public void start_engine_process()
         {
-            Logger.LogInformation("\tUniversalChessInterfaceShould.start_engine_process");
+            Logger.LogInformation("UniversalChessInterfaceShould.start_engine_process");
 
             using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {
@@ -23,7 +23,7 @@ namespace TestChessterUciCore
         [Fact]
         public void receive_uciok_after_setting_uci_mode()
         {
-            Logger.LogInformation("\tUniversalChessInterfaceShould.receive_uciok_after_setting_uci_mode");
+            Logger.LogInformation("UniversalChessInterfaceShould.receive_uciok_after_setting_uci_mode");
             //
             // Note: the UciCommand is sent to enable uci mode during construction of the UniversalChessInterface.
             using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
@@ -35,7 +35,7 @@ namespace TestChessterUciCore
         [Fact]
         public void contain_options_after_initialization()
         {
-            Logger.LogInformation("\tUniversalChessInterfaceShould.contain_options_after_initialization");
+            Logger.LogInformation("UniversalChessInterfaceShould.contain_options_after_initialization");
 
             using (var uci = new UniversalChessInterface(TestUtility.ChessEnginePath))
             {

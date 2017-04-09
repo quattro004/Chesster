@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../ChessterUciCore/ChessterUciCore.csproj" />
+    <None Include="appsettings.json" CopyToOutputDirectory="Always" />
     <None Include="nlog.config" CopyToOutputDirectory="Always" />
     <None Include="stockfish-linux/stockfish_8_x64" CopyToOutputDirectory="Always" />
     <None Include="stockfish-win/stockfish_8_x64.exe" CopyToOutputDirectory="Always" />

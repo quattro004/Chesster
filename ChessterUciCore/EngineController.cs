@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ChessterUciCore
 {
@@ -41,13 +42,12 @@ namespace ChessterUciCore
             }
             var chessEnginePath = default(string);
             var chessterOptions = chessterOptionsAccessor.Value;
-            // TODO: figure out a better way to detect OS.
-            var opSys = Environment.GetEnvironmentVariable("OS");
-            if (!string.IsNullOrWhiteSpace(opSys) && opSys.ToLower().Contains("windows"))
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 chessEnginePath = chessterOptions.ChessEnginePathWindows;
             }
-            else
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 chessEnginePath = chessterOptions.ChessEnginePathLinux;
             }
